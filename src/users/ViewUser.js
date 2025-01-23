@@ -15,9 +15,17 @@ export default function ViewUser() {
     loadUser();
   }, []);
 
+  console.log("Debug ViewUser");
+
   const loadUser = async () => {
-    const result = await axios.get(`http://localhost:8080/user/${id}`);
-    setUser(result.data);
+    try {
+      console.log("Debug: Sending GET request to http://localhost:8080/user/" + id);
+      const result = await axios.get(`http://localhost:8080/user/${id}`);
+      console.log("Debug: Received response", result.data);
+      setUser(result.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
   return (

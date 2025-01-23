@@ -26,6 +26,10 @@ export default function Navbar() {
             Add User
     </Link>
 
+    <Link className="btn btn-outline-light" to="/addusernotes">
+           Add User Notes
+    </Link>
+
     <Link className="btn btn-outline-light" to="/viewusernotes">
            View User Notes
     </Link>
