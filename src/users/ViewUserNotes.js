@@ -38,7 +38,7 @@ export default function ViewUserNotes() {
                                 <thead>
                                     <tr>
                                         <th scope="col">User Note</th>
-                                        <th scope="col">User ID</th>
+                                        <th scope="col">User Note ID</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -52,7 +52,7 @@ export default function ViewUserNotes() {
                             </table>
                         </div>
                     </div>
-                    <Link className="btn btn-primary my-2" to={"/"}>
+                    <Link className="btn btn-primary my-2" to={"/home"}>
                         Back to Home
                     </Link>
                 </div>

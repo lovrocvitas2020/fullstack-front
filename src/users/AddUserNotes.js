@@ -38,7 +38,7 @@ export default function AddUserNotes() {
   const onSubmit = async e => {
     e.preventDefault();
     await axios.post("http://localhost:8080/add_user_notes", userNote); // Ensure this URL matches your backend endpoint
-    navigate("/");
+    navigate("/home");
   };
 
   return (
@@ -76,7 +76,9 @@ export default function AddUserNotes() {
               </select>
             </div>
             <button type="submit" className="btn btn-primary">Submit</button>
-            <Link className="btn btn-secondary my-2" to="/">Cancel</Link>
+            <Link className="btn btn-outline-danger mx-2" to="/home">
+                         Cancel
+            </Link>
           </form>
         </div>
       </div>

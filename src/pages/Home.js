@@ -11,10 +11,17 @@ export default function Home() {
     loadUsers();
   }, []);
 
+  
+
   const loadUsers = async () => {
-    const result = await axios.get("http://localhost:8080/users");
-    setUsers(result.data);
+    try {
+      const result = await axios.get("http://localhost:8080/users");
+      setUsers(result.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
+  
 
   const deleteUser = async (id) => {
     await axios.delete(`http://localhost:8080/user/${id}`);
@@ -24,6 +31,10 @@ export default function Home() {
   return (
     <div className="container">
       <div className="py-4">
+
+
+
+
         <table className="table border shadow">
           <thead>
             <tr>
@@ -67,6 +78,21 @@ export default function Home() {
             ))}
           </tbody>
         </table>
+
+
+        <div className="d-flex gap-2 mb-3">
+                  <Link className="btn btn-outline-dark" to="/adduser">
+                    Add User
+                  </Link>
+                  <Link className="btn btn-outline-dark" to="/addusernotes">
+                    Add User Notes
+                  </Link>
+                  <Link className="btn btn-outline-dark" to="/viewusernotes">
+                    View User Notes
+                  </Link>
+                </div>
+
+
       </div>
     </div>
   );
