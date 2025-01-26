@@ -10,6 +10,7 @@ import ViewUserNotes from './users/ViewUserNotes';
 import AddUserNotes from './users/AddUserNotes';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import EditUserNotes from './users/EditUserNotes';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/register" element={<Register />} />
           <Route exact path="/home" element={<Home />} />
+          <Route exact path="/editusernotes/:id" element={<EditUserNotes />} />
         </Routes>
     
     </Router>

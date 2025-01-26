@@ -30,7 +30,7 @@ export default function ViewUserNotes() {
         <div className="container">
             <div className="row">
                 <div className="col-md-8 offset-md-2 border rounded p-4 mt-2 shadow">
-                    <h2 className="text-center m-4">User Notes</h2>
+                    <h2 className="text-center m-4">User Notes View</h2>
 
                     <div className="card">
                         <div className="card-header">
@@ -39,6 +39,7 @@ export default function ViewUserNotes() {
                                     <tr>
                                         <th scope="col">User Note</th>
                                         <th scope="col">User Note ID</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -46,6 +47,14 @@ export default function ViewUserNotes() {
                                         <tr key={index}>
                                             <td>{note.usernote}</td>
                                             <td>{note.id}</td>
+                                            <td>
+                                                <Link
+                                                    className="btn btn-outline-primary mx-2"
+                                                    to={`/editusernotes/${note.id}`}
+                                                >
+                                                    Edit User Note
+                                                </Link>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
