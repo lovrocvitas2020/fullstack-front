@@ -6,24 +6,80 @@ export default function Home() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate(); // Initialize the navigate function
   const { id } = useParams();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    loadUsers(currentPage, pageSize);
+  }, [currentPage, pageSize]);
+  
 
-  const loadUsers = async () => {
+  const loadUsers = async (page, size) => {
+    setLoading(true);
     try {
-      const result = await axios.get("http://localhost:8080/users");
-      setUsers(result.data);
+      const result = await axios.get("http://localhost:8080/users",
+        {
+          params:{
+            page:page,
+            size:size
+          },
+        }
+      );
+
+    console.log("API Response:", result.data); // Debugging line
+
+    const usersData = result.data._embedded.users.map(user => {
+      const id = user._links.self.href.split("/").pop(); // Extract the ID from the URL
+      return { ...user, id }; // Add the ID to the user object
+    });
+   
+      console.log("t1 result.data: "+result.data);
+      console.log("t1 result.data.totalPages: "+result.data.totalPages);
+     
+      const totalPages = result.data.page.totalPages;
+
+      console.log("Fetched User IDs:", usersData.map(user => user.id)); // Debugging line
+
+     
+
+      setUsers(usersData); // result.data
+      setTotalPages(totalPages); //  result.data.totalPages
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching users:', error);
+      setLoading(false);
     }
   };
 
-  const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:8080/user/${id}`);
-    loadUsers();
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
   };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/user/${id}`);
+      // Reload users after deletion with current page and page size
+      loadUsers(currentPage, pageSize);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setError('Error deleting user');
+    }
+  };
+
+  console.log("Home.js id: "+id);
 
   const logOff = () => {
     // Clear any authentication tokens or session data
@@ -64,7 +120,7 @@ export default function Home() {
           <tbody>
             {users.map((user, index) => (
               <tr key={index}>
-                <th scope="row">{index + 1}</th>
+                <th scope="row">{index + 1 + currentPage * pageSize}</th>
                 <td>{user.name}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
@@ -92,6 +148,17 @@ export default function Home() {
             ))}
           </tbody>
         </table>
+
+        <div className="d-flex justify-content-between">
+          <button className="btn btn-secondary" onClick={handlePreviousPage} disabled={currentPage === 0}>
+            Previous
+          </button>
+          <button className="btn btn-secondary" onClick={handleNextPage} disabled={currentPage >= totalPages - 1}>
+            Next
+          </button>
+        </div>
+
+
       </div>
     </div>
   );

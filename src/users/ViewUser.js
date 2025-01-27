@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 export default function ViewUser() {
@@ -8,14 +8,22 @@ export default function ViewUser() {
     username: "",
     email: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const { id } = useParams();
+  console.log("Extracted ID:", id); // Debugging line
 
   useEffect(() => {
-    loadUser();
-  }, []);
+    if (id) {
+      loadUser();
+    } else {
+      setError("Invalid user ID");
+      setLoading(false);
+    }
+  }, [id]);
 
-  console.log("Debug ViewUser");
+  console.log("ViewUser id: "+id);
 
   const loadUser = async () => {
     try {
@@ -23,8 +31,11 @@ export default function ViewUser() {
       const result = await axios.get(`http://localhost:8080/user/${id}`);
       console.log("Debug: Received response", result.data);
       setUser(result.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching user data:", error);
+      setError("Error fetching user data");
+      setLoading(false);
     }
   };
 
@@ -34,26 +45,29 @@ export default function ViewUser() {
         <div className="col-md-6 offset-md-3 border rounded p-4 mt-2 shadow">
           <h2 className="text-center m-4">User Details</h2>
 
-          <div className="card">
-            <div className="card-header">
-              Details of user id : {user.id}
-              <ul className="list-group list-group-flush">
-                <li className="list-group-item">
-                  <b>Name:</b>
-                  {user.name}
-                </li>
-                <li className="list-group-item">
-                  <b>UserName:</b>
-                  {user.username}
-                </li>
-                <li className="list-group-item">
-                  <b>Email:</b>
-                  {user.email}
-                </li>
-              </ul>
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div className="alert alert-danger">{error}</div>
+          ) : (
+            <div className="card">
+              <div className="card-header">
+                Details of user id : {user.id}
+                <ul className="list-group list-group-flush">
+                  <li className="list-group-item">
+                    <b>Name:</b> {user.name}
+                  </li>
+                  <li className="list-group-item">
+                    <b>Username:</b> {user.username}
+                  </li>
+                  <li className="list-group-item">
+                    <b>Email:</b> {user.email}
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-          <Link className="btn btn-primary my-2" to={"/home"}>
+          )}
+          <Link className="btn btn-primary my-2" to="/home">
             Back to Home
           </Link>
         </div>
