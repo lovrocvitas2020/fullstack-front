@@ -11,6 +11,7 @@ export default function AddUserNotes() {
     });
 
   const [users, setUsers] = useState([]);
+  const [error, setError] = useState(null);
 
   const { usernote, user_id } = userNote;
 
@@ -23,9 +24,22 @@ export default function AddUserNotes() {
   }, []);
 
   const loadUsers = async () => {
-    const result = await axios.get("http://localhost:8080/users");
-    setUsers(result.data);
-  }; // Closed the loadUsers function
+    try {
+      const result = await axios.get("http://localhost:8080/users");
+      console.log("API Response:", result.data); // Debugging line
+  
+      const usersData = result.data._embedded ? result.data._embedded.users.map(user => {
+        const id = user._links.self.href.split("/").pop();
+        return { ...user, id };
+      }) : []; // Safety check to ensure it's an array
+  
+      setUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setError('Error fetching users');
+    }
+  };
+  
 
   const onInputChange = e => {
     if (e.target.name === "usernote") {
