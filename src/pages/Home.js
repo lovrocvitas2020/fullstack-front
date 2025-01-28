@@ -75,7 +75,29 @@ export default function Home() {
     }
   };
 
-  console.log("Home.js id: " + id);
+  const generatexls = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/xls", {
+        responseType: "arraybuffer" // Set the response type to arraybuffer for file download
+      });
+  
+      // Create a Blob from the response data
+      const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+  
+      // Create a link element to simulate downloading the file
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "users.xlsx"; // Set the default file name
+      document.body.appendChild(link);
+      link.click(); // Simulate the click to trigger the download
+      document.body.removeChild(link); // Clean up the link element
+    } catch (error) {
+      console.error("Error fetching data for xls:", error);
+      alert("Failed fetching data for xls");
+    }
+  };
+
+ 
 
   const logOff = () => {
     // Clear any authentication tokens or session data
@@ -98,6 +120,9 @@ export default function Home() {
           <Link className="btn btn-outline-dark" to="/viewusernotes">
             View User Notes
           </Link>
+          <button className="btn btn-outline-primary" onClick={generatexls}>
+            Generate XLS
+          </button> {/* Start generate xls button */}
           <button className="btn btn-outline-dark" onClick={logOff}>
             Log Off
           </button>
