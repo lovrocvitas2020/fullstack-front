@@ -112,7 +112,7 @@ export default function Home() {
       <div className="py-4">
         <div className="d-flex gap-2 mb-3">
           <Link className="btn btn-outline-dark" to="/adduser">
-            Add User
+            Add New User
           </Link>
           <Link className="btn btn-outline-dark" to="/addusernotes">
             Add User Notes
@@ -121,7 +121,7 @@ export default function Home() {
             View User Notes
           </Link>
           <button className="btn btn-outline-primary" onClick={generatexls}>
-            Generate XLS
+            Generate Report XLS
           </button> {/* Start generate xls button */}
           <button className="btn btn-outline-dark" onClick={logOff}>
             Log Off
@@ -146,7 +146,7 @@ export default function Home() {
           <table className="table border shadow">
             <thead>
               <tr>
-                <th scope="col">S.N</th>
+                <th scope="col">Primary Key</th>
                 <th scope="col">Name</th>
                 <th scope="col">Username</th>
                 <th scope="col">Email</th>

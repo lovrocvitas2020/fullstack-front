@@ -23,7 +23,7 @@ export default function ViewUser() {
     }
   }, [id]);
 
-  console.log("ViewUser id: "+id);
+  console.log("ViewUser id: " + id);
 
   const loadUser = async () => {
     try {
@@ -52,7 +52,7 @@ export default function ViewUser() {
           ) : (
             <div className="card">
               <div className="card-header">
-                Details of user id : {user.id}
+                Details of user id: {user.id}
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item">
                     <b>Name:</b> {user.name}
