@@ -27,15 +27,28 @@ const ViewWorklog = () => {
 
     const loadUsers = async () => {
         try {
-            const result = await axios.get("http://localhost:8080/users");
-            const usersData = result.data._embedded?.users.map(user => ({
-                ...user,
-                id: user._links.self.href.split("/").pop()
-            })) || [];
-            setUsers(usersData);
+            let url = "http://localhost:8080/users";
+            let allUsers = [];
+            
+            // Fetch until all pages are loaded
+            while (url) {
+                const result = await axios.get(url);
+                const usersData = result.data._embedded?.users?.map(user => ({
+                    ...user,
+                    id: user._links?.self?.href?.split("/")?.pop() || "Unknown"
+                })) || [];
+   
+                allUsers = [...allUsers, ...usersData];
+                
+                // Check for next page link
+                url = result.data._links?.next?.href || null;
+            }
+   
+            console.log("Fetched All Users:", allUsers);
+            setUsers(allUsers);
         } catch (error) {
-            console.error('Error fetching users:', error);
-            setError('Failed to load users.');
+            console.error("Error fetching users:", error);
+            setError("Failed to load users.");
         }
     };
 
@@ -46,8 +59,19 @@ const ViewWorklog = () => {
             console.log("fetchWorklogs");
     
             const worklogsWithUserData = response.data.map(worklog => {
-                const userId = typeof worklog.user === "object" ? worklog.user.id : worklog.user;
-                const matchedUser = users.find(user => String(user.id) === String(userId));
+
+                
+                console.log("worklog.user:", worklog.user);   
+              /*  console.log("worklog.user.id:", worklog.user.id); this is error  */
+              
+
+            const userId = typeof worklog.user === "object" ? worklog.user.id : worklog.user;
+
+            const matchedUser = users.find(user => String(user.id) === String(userId));
+                
+
+                console.log("userId:", userId);
+                console.log("matchedUser:", matchedUser);
     
                 return {
                     ...worklog,
@@ -68,15 +92,18 @@ const ViewWorklog = () => {
         try {
             const worklogData = { ...newWorklog, user: Number(newWorklog.user) };
             const response = await axios.post("http://localhost:8080/add_worklog", worklogData);
+
+            console.debug("createWorklog response.data.user:"+response.data.user);
+            console.debug("createWorklog Number(newWorklog.user):"+Number(newWorklog.user));
     
             // Find the user object based on the response
-            const matchedUser = users.find(user => String(user.id) === String(response.data.user));
+           const matchedUser = users.find(user => String(user.id) === String(response.data.user)) || { id: response.data.user, username: 'Unknown' };
 
             console.debug("createWorklog matchedUser:"+matchedUser);
     
             setWorklogs([...worklogs, {
                 ...response.data,
-                user: matchedUser || { id: response.data.user, username: 'Unknown nema podataka' }
+                user: matchedUser
             }]);
     
             setNewWorklog({ user: '', workDate: '', startHour: '', endHour: '', workDescription: '' });
@@ -92,7 +119,7 @@ const ViewWorklog = () => {
         const { id, user, workDate, startHour, endHour, workDescription } = editWorklog;
         try {
             await axios.put(`http://localhost:8080/update_worklog/${id}`, {
-                user: {id: user.id, username: user.username},
+                user: user.id,
                 workDate,
                 startHour,
                 endHour,
@@ -127,7 +154,7 @@ const ViewWorklog = () => {
 
             {error && <div className="alert alert-danger">{error}</div>}
 
-            {/* Worklog List */}
+           {/* Worklog List */}
             <div className="card shadow p-3 mb-4">
                 <h3>Existing Worklogs</h3>
                 <ul className="list-group">
@@ -135,7 +162,7 @@ const ViewWorklog = () => {
                         worklogs.map((worklog) => (
                             <li key={worklog.id} className="list-group-item d-flex justify-content-between align-items-center">
                                 <div>
-                                {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.user?.username || 'Unknown 2'}</strong>
+                                    {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.username || 'Unknown'}</strong>
                                     <br />
                                     {worklog.workDescription}
                                 </div>
@@ -172,7 +199,7 @@ const ViewWorklog = () => {
                         >
                             <option value="">Select User</option>
                             {users.map((user) => (
-                                <option key={user.id} value={user.id}>{user.name}</option>
+                                <option key={user.id} value={user.id}>{user.username}</option>
                             ))}
                         </select>
                     </div>

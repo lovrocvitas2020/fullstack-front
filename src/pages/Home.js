@@ -49,7 +49,7 @@ export default function Home() {
   
       const totalPages = result.data.page ? result.data.page.totalPages : 0;
   
-      console.log("Fetched User IDs:", usersData.map(user => user.id)); // Debugging line
+      console.log("Fetched User -> IDs:", usersData.map(user => user.id)); // Debugging line
   
       setUsers(usersData);
       setTotalPages(totalPages);

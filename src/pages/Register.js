@@ -6,6 +6,7 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -14,15 +15,23 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage('');
+    setError('');
 
     try {
       // Fetch existing users to check for duplicate usernames
       const result = await axios.get("http://localhost:8080/users");
       const existingUsers = result.data._embedded?.users || [];
       
+      console.debug("Fetched existing users:", existingUsers);
+      
       const usernameExists = existingUsers.some(existingUser => existingUser.username === username);
+      
+      // Debug statements
+      console.debug("Username:", username);
+      console.debug("Username exists:", usernameExists);
+      
       if (usernameExists) {
-        setSuccessMessage('Username already exists. Please choose a different username.');
+        setError('Username already exists. Please choose a different username.');
         setLoading(false);
         return;
       }
@@ -33,7 +42,8 @@ const Register = () => {
         navigate('/home'); // Redirect to home page
       }
     } catch (error) {
-      setSuccessMessage('Registration failed. Please try again.');
+      setError('Registration failed. Please try again.');
+      console.error('Error during registration:', error);
     } finally {
       setLoading(false);
     }
@@ -160,13 +170,13 @@ const Register = () => {
           </button>
         </div>
       </form>
+      {error && (
+        <p style={{ ...styles.message, ...styles.errorMessage }}>
+          {error}
+        </p>
+      )}
       {successMessage && (
-        <p
-          style={{
-            ...styles.message,
-            ...(successMessage.includes('failed') ? styles.errorMessage : styles.successMessage),
-          }}
-        >
+        <p style={{ ...styles.message, ...styles.successMessage }}>
           {successMessage}
         </p>
       )}

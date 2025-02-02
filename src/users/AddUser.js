@@ -9,10 +9,11 @@ export default function AddUser() {
     name: "",
     username: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { name, username, email, password } = user;
 
@@ -22,25 +23,33 @@ export default function AddUser() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(""); // Clear previous errors
+
     try {
       // Fetch existing users to check for duplicate usernames
       const result = await axios.get("http://localhost:8080/users");
       const existingUsers = result.data._embedded?.users || [];
 
-      console.debug("existingUsers.username"+existingUsers.username);
-      console.debug("username"+username);
-      
-      const usernameExists = existingUsers.some(existingUser => existingUser.username === username);
+      // Check if username (case-insensitive) already exists
+      const usernameExists = existingUsers.some(
+        (existingUser) =>
+          existingUser.username.toLowerCase() === username.toLowerCase()
+      );
+
       if (usernameExists) {
-        setError('Username already exists. Please choose a different username.');
+        setError("Username already exists. Please choose a different username.");
+        setLoading(false);
         return;
       }
 
       await axios.post("http://localhost:8080/user", user);
       navigate("/home");
     } catch (error) {
-      setError('Failed to register user.');
-      console.error('Error creating user:', error);
+      setError("Failed to register user.");
+      console.error("Error creating user:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,48 +63,54 @@ export default function AddUser() {
             <div className="mb-3">
               <label htmlFor="Name" className="form-label">Name</label>
               <input
-                type={"text"}
+                type="text"
                 className="form-control"
                 placeholder="Enter your name"
                 name="name"
                 value={name}
                 onChange={onInputChange}
+                required
               />
             </div>
             <div className="mb-3">
               <label htmlFor="Username" className="form-label">Username</label>
               <input
-                type={"text"}
+                type="text"
                 className="form-control"
                 placeholder="Enter your username"
                 name="username"
                 value={username}
                 onChange={onInputChange}
+                required
               />
             </div>
             <div className="mb-3">
               <label htmlFor="Email" className="form-label">E-mail</label>
               <input
-                type={"text"}
+                type="email"
                 className="form-control"
                 placeholder="Enter your e-mail address"
                 name="email"
                 value={email}
                 onChange={onInputChange}
+                required
               />
             </div>
             <div className="mb-3">
               <label htmlFor="Password" className="form-label">Password</label>
               <input
-                type={"password"}
+                type="password"
                 className="form-control"
                 placeholder="Enter your password"
                 name="password"
                 value={password}
                 onChange={onInputChange}
+                required
               />
             </div>
-            <button type="submit" className="btn btn-outline-primary">Submit</button>
+            <button type="submit" className="btn btn-outline-primary" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </button>
             <Link className="btn btn-outline-danger mx-2" to="/home">Cancel</Link>
           </form>
         </div>
