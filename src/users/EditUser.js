@@ -23,8 +23,25 @@ export default function EditUser() {
     loadUser();
   }, []);
 
+  // Email validation
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
+
+    if (!validateEmail(email)) {
+      alert("Please enter a valid email.");
+      return;
+    }
+
+    if (!name || !username || !email) {
+      alert("All fields are required!");
+      return;
+    }
+
     await axios.put(`http://localhost:8080/user/${id}`, user);
     navigate("/home");
   };
@@ -33,6 +50,8 @@ export default function EditUser() {
     const result = await axios.get(`http://localhost:8080/user/${id}`);
     setUser(result.data);
   };
+
+  
 
   return (
     <div className="container">

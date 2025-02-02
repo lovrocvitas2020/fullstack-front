@@ -12,6 +12,17 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import EditUserNotes from './users/EditUserNotes';
 import UserList from './users/UserList';
+import ViewWorklog from './worklog/ViewWorklog';
+
+
+import { Navigate } from "react-router-dom";
+
+const ProtectedRoute = ({ isAuthenticated, children }) => {
+    return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+
+
 
 function App() {
   return (
@@ -31,6 +42,10 @@ function App() {
           <Route exact path="/home" element={<Home />} />
           <Route exact path="/editusernotes/:id" element={<EditUserNotes />} />
           <Route path="/userlist" element={<UserList />} />
+          <Route path="/viewworklog" element={<ViewWorklog />} />
+          <Route path="/add_worklog" element={<ViewWorklog />} />
+          <Route path="/update_worklog/:id" element={<ViewWorklog />} />
+          <Route path="/delete_worklog/:id" element={<ViewWorklog />} />
         </Routes>
     
     </Router>

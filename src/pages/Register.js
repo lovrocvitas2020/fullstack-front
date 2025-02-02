@@ -16,6 +16,17 @@ const Register = () => {
     setSuccessMessage('');
 
     try {
+      // Fetch existing users to check for duplicate usernames
+      const result = await axios.get("http://localhost:8080/users");
+      const existingUsers = result.data._embedded?.users || [];
+      
+      const usernameExists = existingUsers.some(existingUser => existingUser.username === username);
+      if (usernameExists) {
+        setSuccessMessage('Username already exists. Please choose a different username.');
+        setLoading(false);
+        return;
+      }
+
       const response = await axios.post("http://localhost:8080/register", { username, password });
       if (response.status === 200) {
         setSuccessMessage('Registration successful!');
