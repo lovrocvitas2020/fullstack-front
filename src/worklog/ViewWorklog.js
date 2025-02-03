@@ -6,6 +6,7 @@ const ViewWorklog = () => {
     const [users, setUsers] = useState([]);
     const [worklogs, setWorklogs] = useState([]);
     const [error, setError] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     const [newWorklog, setNewWorklog] = useState({
         user: '',
         workDate: '',
@@ -15,37 +16,66 @@ const ViewWorklog = () => {
     });
     const [editWorklog, setEditWorklog] = useState(null);
 
+    // change A
+    const [filteredWorklogs, setFilteredWorklogs] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState("");
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const worklogsPerPage = 5; // Set the number of worklogs per page
+
+
     useEffect(() => {
         loadUsers();
     }, []);
 
     useEffect(() => {
-        if (users.length > 0) {
+        loadUsers().then(() => {
+            console.log("Users loaded, now fetching worklogs...");
             fetchWorklogs();
+        });
+    }, []);
+
+    // change A - filtering 
+    useEffect(() => {
+        console.debug("Filtering Worklogs...");
+        console.debug("Selected User ID:", selectedUserId);
+        console.debug("All Worklogs before filtering:", worklogs);
+    
+        if (selectedUserId) {
+            const filtered = worklogs.filter(worklog => {
+                console.debug(`Checking Worklog ID: ${worklog.id}, User ID: ${worklog.user.id}, Username: ${worklog.user.username}`);
+                return String(worklog.user.id) === String(selectedUserId);
+            });
+    
+            console.debug("Filtered Worklogs:", filtered);
+            setFilteredWorklogs(filtered);
+        } else {
+            setFilteredWorklogs(worklogs);
         }
-    }, [users]);
+    }, [selectedUserId, worklogs]);
+
 
     const loadUsers = async () => {
         try {
             let url = "http://localhost:8080/users";
             let allUsers = [];
             
-            // Fetch until all pages are loaded
             while (url) {
                 const result = await axios.get(url);
                 const usersData = result.data._embedded?.users?.map(user => ({
                     ...user,
                     id: user._links?.self?.href?.split("/")?.pop() || "Unknown"
                 })) || [];
-   
+    
                 allUsers = [...allUsers, ...usersData];
-                
-                // Check for next page link
+    
                 url = result.data._links?.next?.href || null;
             }
-   
+    
             console.log("Fetched All Users:", allUsers);
             setUsers(allUsers);
+            return allUsers;  // Return data to ensure fetchWorklogs runs correctly
         } catch (error) {
             console.error("Error fetching users:", error);
             setError("Failed to load users.");
@@ -55,36 +85,26 @@ const ViewWorklog = () => {
     const fetchWorklogs = useCallback(async () => {
         try {
             const response = await axios.get('http://localhost:8080/viewworklog');
-
-            console.log("fetchWorklogs");
     
-            const worklogsWithUserData = response.data.map(worklog => {
-
-                
-                console.log("worklog.user:", worklog.user);   
-              /*  console.log("worklog.user.id:", worklog.user.id); this is error  */
-              
-
-            const userId = typeof worklog.user === "object" ? worklog.user.id : worklog.user;
-
-            const matchedUser = users.find(user => String(user.id) === String(userId));
-                
-
-                console.log("userId:", userId);
-                console.log("matchedUser:", matchedUser);
+            console.log("fetchWorklogs response:", response.data);
     
-                return {
-                    ...worklog,
-                    user: matchedUser || { id: userId, username: 'Unknown' }
-                };
-            });
+            const worklogsWithUserData = response.data.map(worklog => ({
+                ...worklog,
+                user: {
+                    id: worklog.userId, 
+                    username: worklog.username
+                }
+            }));
+    
+            console.log("Processed Worklogs:", worklogsWithUserData);
     
             setWorklogs(worklogsWithUserData);
         } catch (error) {
             console.error('Error fetching worklogs:', error);
             setError('Failed to load worklogs.');
         }
-    }, [users]); 
+    }, []);
+    
     
 
     const createWorklog = async (e) => {
@@ -92,14 +112,13 @@ const ViewWorklog = () => {
         try {
             const worklogData = { ...newWorklog, user: Number(newWorklog.user) };
             const response = await axios.post("http://localhost:8080/add_worklog", worklogData);
-
-            console.debug("createWorklog response.data.user:"+response.data.user);
-            console.debug("createWorklog Number(newWorklog.user):"+Number(newWorklog.user));
     
-            // Find the user object based on the response
-           const matchedUser = users.find(user => String(user.id) === String(response.data.user)) || { id: response.data.user, username: 'Unknown' };
-
-            console.debug("createWorklog matchedUser:"+matchedUser);
+            console.debug("createWorklog response:", response.data);
+    
+            // Ensure correct user mapping
+            const matchedUser = users.find(user => String(user.id) === String(response.data.user)) || { id: response.data.user, username: 'Unknown' };
+    
+            console.debug("createWorklog matchedUser:", matchedUser);
     
             setWorklogs([...worklogs, {
                 ...response.data,
@@ -147,6 +166,25 @@ const ViewWorklog = () => {
         setEditWorklog(worklog);
     };
 
+
+    // Pagination Logic
+    const indexOfLastWorklog = currentPage * worklogsPerPage;
+    const indexOfFirstWorklog = indexOfLastWorklog - worklogsPerPage;
+    const currentWorklogs = worklogs.slice(indexOfFirstWorklog, indexOfLastWorklog);
+
+    const nextPage = () => {
+        if (currentPage < Math.ceil(worklogs.length / worklogsPerPage)) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+
     return (
         <div className="container mt-4">
             <h1 className="text-center mb-4">Worklogs</h1>
@@ -154,29 +192,7 @@ const ViewWorklog = () => {
 
             {error && <div className="alert alert-danger">{error}</div>}
 
-           {/* Worklog List */}
-            <div className="card shadow p-3 mb-4">
-                <h3>Existing Worklogs</h3>
-                <ul className="list-group">
-                    {worklogs.length > 0 ? (
-                        worklogs.map((worklog) => (
-                            <li key={worklog.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.username || 'Unknown'}</strong>
-                                    <br />
-                                    {worklog.workDescription}
-                                </div>
-                                <div>
-                                    <button className="btn btn-sm btn-warning mx-2" onClick={() => handleEditClick(worklog)}>✏️ Edit</button>
-                                    <button className="btn btn-sm btn-danger" onClick={() => deleteWorklog(worklog.id)}>🗑️ Delete</button>
-                                </div>
-                            </li>
-                        ))
-                    ) : (
-                        <li className="list-group-item text-center">No worklogs available</li>
-                    )}
-                </ul>
-            </div>
+        
 
             {/* Create or Update Worklog Form */}
             <div className="card shadow p-4">
@@ -277,6 +293,74 @@ const ViewWorklog = () => {
                     <button type="submit" className="btn btn-success w-100">{editWorklog ? 'Update Worklog' : 'Create Worklog'}</button>
                 </form>
             </div>
+
+            <h3>Search Worklogs</h3>
+
+            <div className="mb-3">
+                        <label className="form-label">Worklog User</label>
+
+                        <select
+                            className="form-select"
+                            value={selectedUserId}
+                            onChange={(e) => {
+                                const newUserId = e.target.value;
+                                console.debug("Selected User ID:", newUserId);
+                                setSelectedUserId(newUserId);
+                            }}
+                        >
+                            <option value="">All Users</option>
+                            {users.map((user) => (
+                                <option key={user.id} value={user.id}>{user.username}</option>
+                            ))}
+                        </select>
+
+                    </div>
+
+               {/* Worklog List */}
+               <div className="card shadow p-3 mb-4">
+                <h3>Existing Worklogs</h3>
+                <ul className="list-group">
+
+                        {filteredWorklogs.length > 0 ? (
+                                filteredWorklogs.slice(indexOfFirstWorklog, indexOfLastWorklog).map((worklog) => {
+                                    console.debug("Rendering Worklog:", worklog);
+
+                                    return (
+                                        <li key={worklog.id} className="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                 Username: {worklog.user?.username || "Unknown"}
+                                                <br />
+                                                {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.user?.username || 'Unknown'}</strong>
+                                                <br />
+                                                {worklog.workDescription}
+                                            </div>
+                                            <div>
+                                                <button className="btn btn-sm btn-warning mx-2" onClick={() => handleEditClick(worklog)}>✏️ Edit</button>
+                                                <button className="btn btn-sm btn-danger" onClick={() => deleteWorklog(worklog.id)}>🗑️ Delete</button>
+                                            </div>
+                                        </li>
+                                    );
+                                })
+                    ) : (
+                        <li className="list-group-item text-center">No worklogs available</li>
+                    )}
+
+
+                    </ul>
+
+                {/* Pagination Controls */}
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                    <button className="btn btn-secondary" onClick={prevPage} disabled={currentPage === 1}>
+                        ◀ Previous
+                    </button>
+                    <span>Page {currentPage} of {Math.ceil(worklogs.length / worklogsPerPage)}</span>
+                    <button className="btn btn-secondary" onClick={nextPage} disabled={currentPage >= Math.ceil(worklogs.length / worklogsPerPage)}>
+                        Next ▶
+                    </button>
+                </div>     
+
+            </div>                
+
         </div>
     );
 };
