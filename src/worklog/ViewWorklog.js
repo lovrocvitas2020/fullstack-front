@@ -124,6 +124,9 @@ const ViewWorklog = () => {
                 ...response.data,
                 user: matchedUser
             }]);
+
+            // Fetch the updated worklogs
+            await fetchWorklogs();
     
             setNewWorklog({ user: '', workDate: '', startHour: '', endHour: '', workDescription: '' });
         } catch (error) {
