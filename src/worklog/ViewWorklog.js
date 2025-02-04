@@ -12,6 +12,7 @@ const ViewWorklog = () => {
         workDate: '',
         startHour: '',
         endHour: '',
+        hourSum: '',
         workDescription: ''
     });
     const [editWorklog, setEditWorklog] = useState(null);
@@ -54,6 +55,15 @@ const ViewWorklog = () => {
             setFilteredWorklogs(worklogs);
         }
     }, [selectedUserId, worklogs]);
+
+
+        // Enhanced duration calculation
+    const calculateDuration = (start, end) => {
+        const startTime = new Date(`1970-01-01T${start}`);
+        const endTime = new Date(`1970-01-01T${end}`);
+        return Math.round((endTime - startTime) / 1000); // Return seconds
+    };
+
 
 
     const loadUsers = async () => {
@@ -128,7 +138,7 @@ const ViewWorklog = () => {
             // Fetch the updated worklogs
             await fetchWorklogs();
     
-            setNewWorklog({ user: '', workDate: '', startHour: '', endHour: '', workDescription: '' });
+            setNewWorklog({ user: '', workDate: '', startHour: '', endHour: '', hourSum: '', workDescription: '' });
         } catch (error) {
             console.error('Error creating worklog:', error);
             setError('Failed to create worklog.');
@@ -185,6 +195,13 @@ const ViewWorklog = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
+    };
+
+     // New: Format duration display
+     const formatDuration = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        return `${hours}h ${minutes}m`;
     };
 
 
@@ -335,7 +352,9 @@ const ViewWorklog = () => {
                                                 <br />
                                                 {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.user?.username || 'Unknown'}</strong>
                                                 <br />
-                                                {worklog.workDescription}
+                                                Total Hours Worked: {formatDuration(worklog.durationSeconds)}
+                                                <br />
+                                                Work Description:{worklog.workDescription}
                                             </div>
                                             <div>
                                                 <button className="btn btn-sm btn-warning mx-2" onClick={() => handleEditClick(worklog)}>✏️ Edit</button>
