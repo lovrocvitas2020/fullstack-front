@@ -1,13 +1,14 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../AuthContext'; // Import the authentication context
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const { login } = useAuth(); // Get login function from context
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,22 +17,42 @@ const Login = () => {
     setSuccessMessage('');
 
     try {
-      const response = await axios.post("http://localhost:8080/loginuser", { username, password });
+      const response = await axios.post("http://localhost:8080/loginuser", { 
+        username, 
+        password 
+      });
+
       if (response.status === 200) {
+        // Assuming your backend returns a token in the response
+        const token = response.data.token;
+        
+        // Store token and update authentication state
+        login(token);
+        
         setSuccessMessage('Login successful!');
         navigate('/home');
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setSuccessMessage('Invalid credentials. Please try again.');
+      if (error.response) {
+        switch (error.response.status) {
+          case 401:
+            setSuccessMessage('Invalid credentials. Please try again.');
+            break;
+          case 403:
+            setSuccessMessage('Account disabled. Contact administrator.');
+            break;
+          default:
+            setSuccessMessage('Login failed. Please try again.');
+        }
       } else {
-        setSuccessMessage('Login failed. Please check your connection.');
+        setSuccessMessage('Network error. Please check your connection.');
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // Rest of your component remains the same...
   const handleRegister = () => {
     navigate('/register');
   };
@@ -82,11 +103,11 @@ const Login = () => {
       border: 'none',
       cursor: 'pointer',
     },
-    loginButton: {
+    registerButton: {
       backgroundColor: '#4CAF50',
       color: 'white',
     },
-    registerButton: {
+    loginButton: {
       backgroundColor: '#007BFF',
       color: 'white',
     },
@@ -110,6 +131,7 @@ const Login = () => {
     <div style={styles.container}>
       <h2 style={styles.title}>Login</h2>
       <form onSubmit={handleSubmit}>
+        {/* Keep the existing form structure */}
         <div style={styles.formGroup}>
           <label htmlFor="username" style={styles.label}>Username:</label>
           <input
@@ -157,7 +179,9 @@ const Login = () => {
         <p
           style={{
             ...styles.message,
-            ...(successMessage.includes('failed') ? styles.errorMessage : styles.successMessage),
+            ...(successMessage.toLowerCase().includes('success') 
+              ? styles.successMessage 
+              : styles.errorMessage),
           }}
         >
           {successMessage}
