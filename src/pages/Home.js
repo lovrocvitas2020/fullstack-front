@@ -18,36 +18,26 @@ export default function Home() {
     loadUsers(currentPage, pageSize, searchQuery);
   }, [currentPage, pageSize, searchQuery]);
 
-  const loadWorklog = async () => {
-    try {
-      const responseWorklog = await axios.get("http://localhost:8080/worklogs");
-      console.log("API Response:", responseWorklog.data);
-    } catch (error) {
-      console.error("Error fetching data for worklog:", error);
-      alert("Failed fetching data for worklog");
-    }
-  };
-
   const loadUsers = async (page, size, query) => {
     setLoading(true);
     try {
       const params = query ? { name: query } : { page, size };
-  
+
       const result = await axios.get("http://localhost:8080/users", { params });
-  
-      console.log("API Response:", result.data);
-  
-      const usersData = result.data._embedded 
-        ? result.data._embedded.users.map(user => {
+
+      console.log("API Response result.data :", result.data);
+
+      const usersData = result.data._embedded && result.data._embedded.userList
+        ? result.data._embedded.userList.map(user => {
             const id = user._links.self.href.split("/").pop();
-            return { ...user, id }; 
-          }) 
+            return { ...user, id };
+          })
         : [];
-  
+
       const totalPages = result.data.page ? result.data.page.totalPages : 0;
-  
+
       console.log("Fetched User -> IDs:", usersData.map(user => user.id));
-  
+
       setUsers(usersData);
       setTotalPages(totalPages);
       setLoading(false);
@@ -90,11 +80,11 @@ export default function Home() {
       const response = await axios.get("http://localhost:8080/xls", {
         responseType: "arraybuffer"
       });
-  
+
       const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
 
       const timestamp = new Date().toISOString().replace(/[:\-]/g, '').replace(/\..+/, '');
-  
+
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `users_${timestamp}.xlsx`;
