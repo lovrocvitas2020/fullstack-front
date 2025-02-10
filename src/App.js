@@ -14,6 +14,8 @@ import EditUserNotes from './users/EditUserNotes';
 import UserList from './users/UserList';
 import ViewWorklog from './worklog/ViewWorklog';
 import { AuthProvider, useAuth } from './AuthContext'; // Import AuthProvider
+import ViewUserDetails from './users/ViewUserDetails';
+import AddUserDetails from './users/AddUserDetails'; // Ensure this import is correct
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -68,6 +70,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ViewUser />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/userdetails/:id"
+              element={
+                <ProtectedRoute>
+                  <ViewUserDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adduserdetails/:id"
+              element={
+                <ProtectedRoute>
+                  <AddUserDetails />
                 </ProtectedRoute>
               }
             />

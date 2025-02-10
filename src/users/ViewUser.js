@@ -70,6 +70,14 @@ export default function ViewUser() {
           <Link className="btn btn-primary my-2" to="/home">
             Back to Home
           </Link>
+          {/* Add the View User Details button */}
+          <Link className="btn btn-secondary my-2" to={`/userdetails/${id}`}>
+            View User Details
+          </Link>
+          {/* Add the Add User Details button */}
+          <Link className="btn btn-success my-2" to={`/adduserdetails/${id}`}>
+            Add User Details
+          </Link>
         </div>
       </div>
     </div>
