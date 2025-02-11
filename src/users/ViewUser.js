@@ -7,6 +7,7 @@ export default function ViewUser() {
     name: "",
     username: "",
     email: "",
+    active: false,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -62,6 +63,9 @@ export default function ViewUser() {
                   </li>
                   <li className="list-group-item">
                     <b>Email:</b> {user.email}
+                  </li>
+                  <li className="list-group-item">
+                    <b>Active:</b> {user.active ? "Yes" : "No"} {/* Add this line to display isActive */}
                   </li>
                 </ul>
               </div>

@@ -11,8 +11,8 @@ export default function ViewUserDetails() {
     sex: "",
     countryOfBirth: "",
     city: "",
-    zipCode: ""
-    // Add any other fields you have in your UserDetails model
+    zipCode: "",
+    userImage: null
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -77,6 +77,18 @@ export default function ViewUserDetails() {
                   </li>
                   <li className="list-group-item">
                     <b>Zip Code:</b> {userDetails.zipCode}
+                  </li>
+                  <li className="list-group-item">
+                    <b>User Image:</b>
+                    {userDetails.userImage ? (
+                      <img
+                        src={`data:image/jpeg;base64,${userDetails.userImage}`}
+                        alt="User"
+                        className="img-fluid"
+                      />
+                    ) : (
+                      <div>No image available</div>
+                    )}
                   </li>
                   {/* Add any other details you want to display */}
                 </ul>
