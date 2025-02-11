@@ -72,10 +72,14 @@ const ViewWorklog = () => {
             let allUsers = [];
             
             while (url) {
+                console.log("Fetching from URL:", url);
                 const result = await axios.get(url);
-                const usersData = result.data._embedded?.users?.map(user => ({
+                console.log("Raw Response Data:", result.data);
+    
+                // Check if `_embedded` contains `userList` instead of `users`
+                const usersData = result.data._embedded?.userList?.map(user => ({
                     ...user,
-                    id: user._links?.self?.href?.split("/")?.pop() || "Unknown"
+                    id: user._links?.self?.href?.split("/").pop() || "Unknown"
                 })) || [];
     
                 allUsers = [...allUsers, ...usersData];
@@ -84,7 +88,7 @@ const ViewWorklog = () => {
             }
     
             console.log("Fetched All Users:", allUsers);
-            setUsers(allUsers);
+            setUsers(allUsers); // Update state with fetched users
             return allUsers;  // Return data to ensure fetchWorklogs runs correctly
         } catch (error) {
             console.error("Error fetching users:", error);
