@@ -16,6 +16,7 @@ import ViewWorklog from './worklog/ViewWorklog';
 import { AuthProvider, useAuth } from './AuthContext'; // Import AuthProvider
 import ViewUserDetails from './users/ViewUserDetails';
 import AddUserDetails from './users/AddUserDetails'; // Ensure this import is correct
+import ResetPassword from './users/ResetPassword';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -126,6 +127,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ViewWorklog />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reset-password/:id"
+              element={
+                <ProtectedRoute>
+                  <ResetPassword />
                 </ProtectedRoute>
               }
             />

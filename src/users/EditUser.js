@@ -14,11 +14,17 @@ export default function EditUser() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [validationError, setValidationError] = useState(null);
 
   const { name, username, email, active } = user;
 
   const onInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "email" && !validateEmail(value)) {
+      setValidationError("Please enter a valid email.");
+    } else {
+      setValidationError(null);
+    }
     setUser({
       ...user,
       [name]: type === "checkbox" ? checked : value,
@@ -37,12 +43,12 @@ export default function EditUser() {
     e.preventDefault();
 
     if (!validateEmail(email)) {
-      alert("Please enter a valid email.");
+      setValidationError("Please enter a valid email.");
       return;
     }
 
     if (!name || !username || !email) {
-      alert("All fields are required!");
+      setValidationError("All fields are required!");
       return;
     }
 
@@ -64,6 +70,12 @@ export default function EditUser() {
       setError("Error fetching user data.");
       setLoading(false);
     }
+  };
+
+  const resetPassword = () => {
+    // Logika za reset lozinke
+    // Na primjer, preusmjeravanje na stranicu za reset lozinke
+    navigate(`/reset-password/${id}`);
   };
 
   return (
@@ -120,6 +132,9 @@ export default function EditUser() {
                   required
                 />
               </div>
+              {validationError && (
+                <div className="alert alert-danger">{validationError}</div>
+              )}
               <div className="mb-3">
                 <label htmlFor="active" className="form-label">
                   Active
@@ -134,6 +149,13 @@ export default function EditUser() {
               </div>
               <button type="submit" className="btn btn-outline-primary">
                 Submit
+              </button>
+              <button
+                type="button"
+                className="btn btn-outline-warning mx-2"
+                onClick={resetPassword}
+              >
+                Reset Password
               </button>
               <Link className="btn btn-outline-danger mx-2" to="/home">
                 Cancel
