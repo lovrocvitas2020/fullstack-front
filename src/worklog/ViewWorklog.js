@@ -351,14 +351,14 @@ const ViewWorklog = () => {
 
                                     return (
                                         <li key={worklog.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
+                                            <div style={{ textAlign: 'left' }}>
                                                  Username: {worklog.user?.username || "Unknown"}
                                                 <br />
                                                 {worklog.workDate} - {worklog.startHour} to {worklog.endHour} - <strong>{worklog.user?.username || 'Unknown'}</strong>
                                                 <br />
                                                 Total Hours Worked: {formatDuration(worklog.durationSeconds)}
                                                 <br />
-                                                Work Description:{worklog.workDescription}
+                                                Work Description: {worklog.workDescription}
                                             </div>
                                             <div>
                                                 <button className="btn btn-sm btn-warning mx-2" onClick={() => handleEditClick(worklog)}>✏️ Edit</button>

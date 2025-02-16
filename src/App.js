@@ -131,7 +131,15 @@ function App() {
               }
             />
             <Route
-              path="/reset-password/:id"
+              path="/send-reset-request/:id"
+              element={
+                <ProtectedRoute>
+                  <ResetPassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/confirm-reset-password/:id"
               element={
                 <ProtectedRoute>
                   <ResetPassword />

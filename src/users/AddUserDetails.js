@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Spinner, Alert } from "reactstrap";
+import axios from "axios";
 
 const initialFormData = {
   phoneNumber: "",
@@ -18,17 +18,17 @@ export default function AddUserDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [isEditMode, setIsEditMode] = useState(false);
-
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(!!id);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     if (id) {
       setLoading(true);
-  
+
       const fetchUserDetails = async () => {
         try {
           const response = await axios.get(`http://localhost:8080/userdetails/${id}`);
@@ -51,7 +51,7 @@ export default function AddUserDetails() {
           setLoading(false);
         }
       };
-  
+
       fetchUserDetails();
     } else {
       setFormData(initialFormData);
@@ -68,6 +68,7 @@ export default function AddUserDetails() {
         ...prev,
         userImage: files[0], // Handle file input
       }));
+      setImagePreview(URL.createObjectURL(files[0])); // Set image preview
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -232,6 +233,14 @@ export default function AddUserDetails() {
                 accept="image/*"
                 onChange={handleChange}
               />
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="mt-2"
+                  style={{ maxWidth: "100%", height: "auto" }}
+                />
+              )}
             </div>
 
             <div className="d-grid gap-2">

@@ -75,7 +75,7 @@ export default function EditUser() {
   const resetPassword = () => {
     // Logika za reset lozinke
     // Na primjer, preusmjeravanje na stranicu za reset lozinke
-    navigate(`/reset-password/${id}`);
+    navigate(`/send-reset-request/${id}`);
   };
 
   return (
