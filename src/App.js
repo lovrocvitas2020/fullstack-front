@@ -13,10 +13,15 @@ import Register from './pages/Register';
 import EditUserNotes from './users/EditUserNotes';
 import UserList from './users/UserList';
 import ViewWorklog from './worklog/ViewWorklog';
-import { AuthProvider, useAuth } from './AuthContext'; // Import AuthProvider
+import { AuthProvider, useAuth } from './AuthContext'; 
 import ViewUserDetails from './users/ViewUserDetails';
-import AddUserDetails from './users/AddUserDetails'; // Ensure this import is correct
+import AddUserDetails from './users/AddUserDetails';
 import ResetPassword from './users/ResetPassword';
+import ParametrizationOverview from './parametrization/ParametrizationOverview';
+import AddProject from './parametrization/AddProject';
+import ViewProject from './parametrization/ViewProject';
+import EditProject from './parametrization/EditProject';
+
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -143,6 +148,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ResetPassword />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/parametrizationoverview"
+              element={
+                <ProtectedRoute>
+                  <ParametrizationOverview />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/addprojects"
+              element={
+                <ProtectedRoute>
+                  <AddProject />
+                </ProtectedRoute>
+              }
+            />
+               <Route
+              path="/viewprojects"
+              element={
+                <ProtectedRoute>
+                  <ViewProject />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/editproject/:id"
+              element={
+                <ProtectedRoute>
+                  <EditProject />
                 </ProtectedRoute>
               }
             />

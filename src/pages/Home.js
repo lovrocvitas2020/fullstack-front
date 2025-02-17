@@ -121,6 +121,9 @@ export default function Home() {
               <Link className="btn custom-btn" to="/viewworklog">
                 View Work Log
               </Link>
+              <Link className="btn custom-btn" to="/parametrizationoverview">
+                Parametrization Overview
+              </Link>
               <button className="btn custom-btn" onClick={generatexls}>
                 Generate Report XLS
               </button>
