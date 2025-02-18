@@ -1,43 +1,42 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import './Home.css'; // Make sure to create and import a CSS file
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from '../AuthContext';
+import './Home.css';
 
 export default function Home() {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user, logout } = useAuth();
 
   useEffect(() => {
+    console.log('User:', user); // Log user to verify it's being set correctly
+    if (user) {
+      console.log('Username:', user.username);
+      console.log('Email:', user.email);
+    }
+
     loadUsers(currentPage, pageSize, searchQuery);
-  }, [currentPage, pageSize, searchQuery]);
+  }, [currentPage, pageSize, searchQuery, user]);
 
   const loadUsers = async (page, size, query) => {
     setLoading(true);
     try {
       const params = query ? { name: query } : { page, size };
-
       const result = await axios.get("http://localhost:8080/users", { params });
-
-      console.log("API Response result.data :", result.data);
-
       const usersData = result.data._embedded && result.data._embedded.userList
         ? result.data._embedded.userList.map(user => {
             const id = user._links.self.href.split("/").pop();
             return { ...user, id };
           })
         : [];
-
       const totalPages = result.data.page ? result.data.page.totalPages : 0;
-
-      console.log("Fetched User -> IDs:", usersData.map(user => user.id));
-
       setUsers(usersData);
       setTotalPages(totalPages);
       setLoading(false);
@@ -45,6 +44,7 @@ export default function Home() {
       console.error("Error fetching users:", error);
       setError("Error fetching users");
       setLoading(false);
+      setUsers([]);
     }
   };
 
@@ -80,11 +80,8 @@ export default function Home() {
       const response = await axios.get("http://localhost:8080/xls", {
         responseType: "arraybuffer"
       });
-
       const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-
       const timestamp = new Date().toISOString().replace(/[:\-]/g, '').replace(/\..+/, '');
-
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = `users_${timestamp}.xlsx`;
@@ -98,14 +95,21 @@ export default function Home() {
   };
 
   const logOff = () => {
-    localStorage.removeItem("authToken");
+    logout();
     navigate("/login");
   };
 
   return (
     <div className="container">
+      <div className="user-info">
+        {user && (
+          <div>
+            <span>Welcome, {user.username}!</span>
+            <p>Email: {user.email}</p>
+          </div>
+        )}
+      </div>
       <div className="py-4">
-        {/* Container for buttons on the left */}
         <div className="row">
           <div className="col-md-3">
             <div className="d-flex flex-column gap-2 mb-3">
@@ -132,7 +136,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-
           <div className="col-md-9">
             <div className="mb-3">
               <input
@@ -143,9 +146,7 @@ export default function Home() {
                 onChange={handleSearchChange}
               />
             </div>
-
             {error && <div className="alert alert-danger">{error}</div>}
-
             {loading ? (
               <div>Loading...</div>
             ) : (
@@ -182,8 +183,7 @@ export default function Home() {
                 </tbody>
               </table>
             )}
-
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="pagination">
               <button className="btn btn-secondary" onClick={handlePreviousPage} disabled={currentPage === 0}>
                 Previous
               </button>

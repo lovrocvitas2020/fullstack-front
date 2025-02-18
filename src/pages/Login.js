@@ -22,12 +22,17 @@ const Login = () => {
         password 
       });
 
+      console.log("Response from backend:", response); // Log the entire response
+
       if (response.status === 200) {
-        // Assuming your backend returns a token in the response
-        const token = response.data.token;
+        // Assuming your backend returns a token and user data in the response
+        const { token, user } = response.data;
         
+        console.log("Received token:", token);
+        console.log("Received user data:", user);
+
         // Store token and update authentication state
-        login(token);
+        login(token, user);
         
         setSuccessMessage('Login successful!');
         navigate('/home');
