@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import MapComponent from './MapComponent'
 
 function ParametrizationOverview() {
   const navigate = useNavigate();
@@ -13,8 +14,11 @@ function ParametrizationOverview() {
             <Link to="/viewprojects" className="btn btn-primary mx-2">View Projects</Link>
           </li>
           <li className="mb-2">
-            <Link to="/task" className="btn btn-primary mx-2">Task</Link>
+            <Link to="/viewtasks" className="btn btn-primary mx-2">Task</Link>
           </li>
+        
+           {/*  <li className="mb-2">           <MapComponent /></li>  */}
+      
           {/* Add more links as needed */}
           <li className="mb-2">
             <button

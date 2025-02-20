@@ -101,7 +101,7 @@ export default function Home() {
 
   return (
     <div className="container">
-      <div className="user-info">
+      <div className="user-info-left">
         {user && (
           <div>
             <span>Welcome, {user.username}!</span>

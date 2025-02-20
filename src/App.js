@@ -21,6 +21,8 @@ import ParametrizationOverview from './parametrization/ParametrizationOverview';
 import AddProject from './parametrization/AddProject';
 import ViewProject from './parametrization/ViewProject';
 import EditProject from './parametrization/EditProject';
+import MapComponent from './parametrization/MapComponent';
+import ViewTasks from './parametrization/ViewTasks';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -167,7 +169,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-               <Route
+              <Route
               path="/viewprojects"
               element={
                 <ProtectedRoute>
@@ -180,6 +182,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EditProject />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/viewtasks"
+              element={
+                <ProtectedRoute>
+                  <ViewTasks />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/addtask"
+              element={
+                <ProtectedRoute>
+                  <ViewTasks />
                 </ProtectedRoute>
               }
             />
