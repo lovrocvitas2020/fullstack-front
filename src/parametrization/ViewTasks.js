@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function ViewTasks() {
   const [tasks, setTasks] = useState([]);
@@ -11,6 +12,10 @@ function ViewTasks() {
     dueDate: '',
     status: 'PENDING', // Default status
   });
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 5; // Number of tasks per page
 
   useEffect(() => {
     async function fetchTasks() {
@@ -41,9 +46,26 @@ function ViewTasks() {
       const response = await axios.post('http://localhost:8080/addtask', newTask);
       setTasks([...tasks, response.data]);
       setNewTask({ taskName: '', description: '', dueDate: '', status: 'PENDING' });
+      setCurrentPage(Math.ceil((tasks.length + 1) / tasksPerPage)); // Move to the last page
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  // Calculate the number of pages
+  const totalPages = Math.ceil(tasks.length / tasksPerPage);
+
+  // Get the tasks for the current page
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = tasks.slice(indexOfFirstTask, indexOfLastTask);
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => (prevPage > 1 ? prevPage - 1 : prevPage));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => (prevPage < totalPages ? prevPage + 1 : prevPage));
   };
 
   if (loading) {
@@ -54,10 +76,12 @@ function ViewTasks() {
     return <div>Error: {error}</div>;
   }
 
-  
   return (
     <div className="container mt-5">
       <h1>All Tasks</h1>
+      <Link className="btn btn-primary mb-3" to="/parametrizationoverview">
+        🏠 Back to Parametrization Overview
+      </Link>
       <form onSubmit={handleAddTask} className="mb-4">
         <h2>Add New Task</h2>
         <div className="form-group">
@@ -112,28 +136,55 @@ function ViewTasks() {
         </div>
         <button type="submit" className="btn btn-primary">Add Task</button>
       </form>
+
+
       <ul>
-        {tasks.map(task => (
+        {currentTasks.map(task => (
           <li key={task.id}>
-            <strong>Task Name:</strong> {task.taskName}<br />
-            <strong>Description:</strong> {task.description}<br />
-            <strong>Status:</strong> {task.status}<br />
-            <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleString()}<br />
-            <strong>Project:</strong> {task.project ? task.project.name : 'No project assigned'}<br />
-            <strong>Assigned Users:</strong>
-            {task.userTasks && task.userTasks.length > 0 ? (
-              <ul>
-                {task.userTasks.map(userTask => (
-                  <li key={userTask.id}>{userTask.user.username}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No users assigned</p>
-            )}
+            <div style={{ textAlign: 'left' }}>
+              <strong>Task Name:</strong> {task.taskName}<br />
+              <strong>Description:</strong> {task.description}<br />
+              <strong>Status:</strong> {task.status}<br />
+              <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleString()}<br />
+              <strong>Project:</strong> {task.project ? task.project.name : 'No project assigned'}<br />
+              <strong>Assigned Users:</strong>
+              {task.userTasks && task.userTasks.length > 0 ? (
+                <ul>
+                  {task.userTasks.map(userTask => (
+                    <li key={userTask.id}>{userTask.user.username}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No users assigned</p>
+              )}
+            </div>
             <hr />
           </li>
         ))}
       </ul>
+
+
+      <nav aria-label="Page navigation">
+        <ul className="pagination">
+          <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+            <button className="page-link" onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Previous
+            </button>
+          </li>
+          {[...Array(totalPages)].map((_, index) => (
+            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+              <button className="page-link" onClick={() => setCurrentPage(index + 1)}>
+                {index + 1}
+              </button>
+            </li>
+          ))}
+          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+            <button className="page-link" onClick={handleNextPage} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
