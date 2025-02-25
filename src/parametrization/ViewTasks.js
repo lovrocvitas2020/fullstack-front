@@ -6,11 +6,13 @@ function ViewTasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [projects, setProjects] = useState([]);
   const [newTask, setNewTask] = useState({
     taskName: '',
     description: '',
     dueDate: '',
     status: 'PENDING', // Default status
+    project_id: '' // New project_id field
   });
 
   // Pagination state
@@ -22,6 +24,11 @@ function ViewTasks() {
       try {
         const response = await axios.get('http://localhost:8080/viewtasks');
         setTasks(response.data);
+
+        const projectsResponse = await axios.get('http://localhost:8080/viewprojects');
+        console.log('Projects fetched:', projectsResponse.data); // Debugging statement
+        setProjects(projectsResponse.data);
+
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -36,18 +43,21 @@ function ViewTasks() {
     const { name, value } = e.target;
     setNewTask({
       ...newTask,
-      [name]: value,
+      [name]: name === "project_id" ? parseInt(value, 10) : value, // Ensure project_id is an integer
     });
   };
 
   const handleAddTask = async (e) => {
     e.preventDefault();
+    console.log('New task payload:', newTask); // Debugging statement to check payload
     try {
       const response = await axios.post('http://localhost:8080/addtask', newTask);
+      console.log('Response from server:', response.data); // Debugging statement to check server response
       setTasks([...tasks, response.data]);
-      setNewTask({ taskName: '', description: '', dueDate: '', status: 'PENDING' });
+      setNewTask({ taskName: '', description: '', dueDate: '', status: 'PENDING', project_id: '' });
       setCurrentPage(Math.ceil((tasks.length + 1) / tasksPerPage)); // Move to the last page
     } catch (err) {
+      console.error("Error adding task:", err);
       setError(err.message);
     }
   };
@@ -77,6 +87,7 @@ function ViewTasks() {
   }
 
   return (
+    
     <div className="container mt-5">
       <h1>All Tasks</h1>
       <Link className="btn btn-primary mb-3" to="/parametrizationoverview">
@@ -134,35 +145,56 @@ function ViewTasks() {
             <option value="COMPLETED">COMPLETED</option>
           </select>
         </div>
+        <div className="form-group">
+          <label htmlFor="project_id">Project</label>
+          <select
+            className="form-control"
+            id="project_id"
+            name="project_id"
+            value={newTask.project_id}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select a project</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>{project.projectName}</option>
+            ))}
+          </select>
+        </div>
         <button type="submit" className="btn btn-primary">Add Task</button>
       </form>
 
-
       <ul>
-        {currentTasks.map(task => (
-          <li key={task.id}>
-            <div style={{ textAlign: 'left' }}>
-              <strong>Task Name:</strong> {task.taskName}<br />
-              <strong>Description:</strong> {task.description}<br />
-              <strong>Status:</strong> {task.status}<br />
-              <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleString()}<br />
-              <strong>Project:</strong> {task.project ? task.project.name : 'No project assigned'}<br />
-              <strong>Assigned Users:</strong>
-              {task.userTasks && task.userTasks.length > 0 ? (
-                <ul>
-                  {task.userTasks.map(userTask => (
-                    <li key={userTask.id}>{userTask.user.username}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No users assigned</p>
-              )}
-            </div>
-            <hr />
-          </li>
-        ))}
-      </ul>
+  {currentTasks.map(task => {
+    console.log('Current task:', task); // Debugging statement to log each task
 
+    return (
+      <li key={task.id}>
+        <div style={{ textAlign: 'left' }}>
+          <strong>Task Name:</strong> {task.taskName}<br />
+          <strong>Description:</strong> {task.description}<br />
+          <strong>Status:</strong> {task.status}<br />
+          <strong>Due Date:</strong> {new Date(task.dueDate).toLocaleString()}<br />
+          <strong>Project Name:</strong> {task.projectName ? task.projectName : 'No project assigned'}<br />
+          <strong>Assigned Users:</strong>
+          {task.userTasks && task.userTasks.length > 0 ? (
+            <ul>
+              {task.userTasks.map(userTask => {
+                console.log('User task:', userTask); // Debugging statement to log each user task
+                return (
+                  <li key={userTask.id}>{userTask.user.username}</li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>No users assigned</p>
+          )}
+        </div>
+        <hr />
+      </li>
+    );
+  })}
+</ul>
 
       <nav aria-label="Page navigation">
         <ul className="pagination">
