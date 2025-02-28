@@ -23,6 +23,9 @@ import ViewProject from './parametrization/ViewProject';
 import EditProject from './parametrization/EditProject';
 import MapComponent from './parametrization/MapComponent';
 import ViewTasks from './parametrization/ViewTasks';
+import PaymentSlipsList from './payment/PaymentSlipsList';
+import PaymentSlipForm from './payment/PaymentSlipForm';
+import PaymentSlipDetails from './payment/PaymentsSlipDetails';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -198,6 +201,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ViewTasks />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/viewpaymentslips"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipsList />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/addpaymentslips"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipForm />
+                </ProtectedRoute>
+              }
+            />
+                 <Route
+              path="/paymentslips/:id"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipDetails />
                 </ProtectedRoute>
               }
             />

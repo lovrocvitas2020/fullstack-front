@@ -16,6 +16,9 @@ function ParametrizationOverview() {
           <li className="mb-2">
             <Link to="/viewtasks" className="btn btn-primary mx-2">Task</Link>
           </li>
+          <li className="mb-2">
+            <Link to="/viewpaymentslips" className="btn btn-primary mx-2">Payment Slips</Link>
+          </li>
         
            {/*  <li className="mb-2">           <MapComponent /></li>  */}
       
