@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import bwipjs from 'bwip-js';
 
 const PaymentSlipForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const canvasRef = useRef(null);
+
   const [formData, setFormData] = useState({
     currencyCode: '',
     amount: '',
@@ -22,54 +27,84 @@ const PaymentSlipForm = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  useEffect(() => {
+    if (id) {
+      fetchPaymentSlip(id);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    generatePdf417Barcode();
+  }, [formData]);
+
+  const fetchPaymentSlip = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/viewpaymentslip/${id}`);
+      setFormData(response.data);
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Error loading payment slip data.' });
+    }
   };
 
-  const validateForm = () => {
-    if (!formData.currencyCode || !formData.amount || !formData.payerName || !formData.recipientName) {
-      setMessage({ type: 'error', text: 'Please fill out all required fields.' });
-      return false;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const generateBarcodeData = () => {
+    return `HRVHUB30${formData.currencyCode}${String(Math.round(formData.amount * 100)).padStart(15, '0')}${formData.payerName}${formData.payerAddress}${formData.payerCity}${formData.recipientName}${formData.recipientAddress}${formData.recipientCity}${formData.recipientAccount}HR${formData.modelNumber}${formData.callModelNumber}${formData.purposeCode}${formData.description}`;
+  };
+
+  const generatePdf417Barcode = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const barcodeData = generateBarcodeData();
+
+    try {
+      bwipjs.toCanvas(canvas, {
+        bcid: 'pdf417',
+        text: barcodeData,
+        scale: 3,
+        height: 10,
+        includetext: true,
+      });
+    } catch (error) {
+      console.error('Error generating barcode:', error);
     }
-    if (formData.amount <= 0) {
-      setMessage({ type: 'error', text: 'Amount must be a positive number.' });
-      return false;
-    }
-    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
-
     setLoading(true);
     setMessage(null);
 
     try {
-      const response = await axios.post('http://localhost:8080/addpaymentslips', formData);
-      console.log("formData:", formData)
-      setMessage({ type: 'success', text: 'Payment slip submitted successfully!' });
-      setFormData({
-        currencyCode: '',
-        amount: '',
-        payerName: '',
-        payerAddress: '',
-        payerCity: '',
-        recipientName: '',
-        recipientAddress: '',
-        recipientCity: '',
-        recipientAccount: '',
-        modelNumber: '',
-        callModelNumber: '',
-        purposeCode: '',
-        description: ''
-      });
+      if (id) {
+        await axios.put(`http://localhost:8080/editpaymentslip/${id}`, formData);
+        setMessage({ type: 'success', text: 'Payment slip updated successfully!' });
+      } else {
+        await axios.post('http://localhost:8080/addpaymentslips', formData);
+        setMessage({ type: 'success', text: 'Payment slip submitted successfully!' });
+        setFormData({
+          currencyCode: '',
+          amount: '',
+          payerName: '',
+          payerAddress: '',
+          payerCity: '',
+          recipientName: '',
+          recipientAddress: '',
+          recipientCity: '',
+          recipientAccount: '',
+          modelNumber: '',
+          callModelNumber: '',
+          purposeCode: '',
+          description: ''
+        });
+      }
+      navigate('/viewpaymentslips');
     } catch (error) {
-      setMessage({ type: 'error', text: 'There was an error submitting the payment slip. Try again later.' });
+      setMessage({ type: 'error', text: 'There was an error submitting the payment slip.' });
     } finally {
       setLoading(false);
     }
@@ -77,18 +112,15 @@ const PaymentSlipForm = () => {
 
   return (
     <div className="container mt-4">
-         <Link className="btn btn-primary mb-3" to="/viewpaymentslips">
+      <Link className="btn btn-primary mb-3" to="/viewpaymentslips">
         🏠 Back to View Payment Slips
       </Link>
-      <h2 className="mb-3">Enter Payment Slip Data</h2>
-      
-      {message && (
-        <div className={`alert ${message.type === 'error' ? 'alert-danger' : 'alert-success'}`} role="alert">
-          {message.text}
-        </div>
-      )}
+      <h2>{id ? 'Edit Payment Slip' : 'Enter Payment Slip Data'}</h2>
+
+      {message && <div className={`alert ${message.type === 'error' ? 'alert-danger' : 'alert-success'}`}>{message.text}</div>}
 
       <form onSubmit={handleSubmit} className="border p-4 rounded shadow">
+        {/* Currency Code and Amount */}
         <div className="row">
           <div className="col-md-6">
             <label className="form-label">Currency Code:</label>
@@ -100,6 +132,7 @@ const PaymentSlipForm = () => {
           </div>
         </div>
 
+        {/* Payer Information */}
         <div className="row mt-2">
           <div className="col-md-6">
             <label className="form-label">Payer Name:</label>
@@ -107,54 +140,47 @@ const PaymentSlipForm = () => {
           </div>
           <div className="col-md-6">
             <label className="form-label">Payer Address:</label>
-            <input type="text" name="payerAddress" value={formData.payerAddress} onChange={handleChange} className="form-control" required />
+            <input type="text" name="payerAddress" value={formData.payerAddress} onChange={handleChange} className="form-control" />
           </div>
         </div>
 
+        {/* Recipient Information */}
         <div className="row mt-2">
-          <div className="col-md-6">
-            <label className="form-label">Payer City:</label>
-            <input type="text" name="payerCity" value={formData.payerCity} onChange={handleChange} className="form-control" required />
-          </div>
           <div className="col-md-6">
             <label className="form-label">Recipient Name:</label>
             <input type="text" name="recipientName" value={formData.recipientName} onChange={handleChange} className="form-control" required />
           </div>
-        </div>
-
-        <div className="row mt-2">
           <div className="col-md-6">
             <label className="form-label">Recipient Address:</label>
-            <input type="text" name="recipientAddress" value={formData.recipientAddress} onChange={handleChange} className="form-control" required />
-          </div>
-          <div className="col-md-6">
-            <label className="form-label">Recipient City:</label>
-            <input type="text" name="recipientCity" value={formData.recipientCity} onChange={handleChange} className="form-control" required />
+            <input type="text" name="recipientAddress" value={formData.recipientAddress} onChange={handleChange} className="form-control" />
           </div>
         </div>
 
+        {/* Recipient Account */}
         <div className="row mt-2">
-          <div className="col-md-6">
+          <div className="col-md-12">
             <label className="form-label">Recipient Account:</label>
             <input type="text" name="recipientAccount" value={formData.recipientAccount} onChange={handleChange} className="form-control" required />
           </div>
-          <div className="col-md-6">
+        </div>
+
+        {/* Additional Fields */}
+        <div className="row mt-2">
+          <div className="col-md-4">
             <label className="form-label">Model Number:</label>
             <input type="text" name="modelNumber" value={formData.modelNumber} onChange={handleChange} className="form-control" />
           </div>
-        </div>
-
-        <div className="row mt-2">
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Call Model Number:</label>
             <input type="text" name="callModelNumber" value={formData.callModelNumber} onChange={handleChange} className="form-control" />
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Purpose Code:</label>
             <input type="text" name="purposeCode" value={formData.purposeCode} onChange={handleChange} className="form-control" />
           </div>
         </div>
 
+        {/* Description */}
         <div className="mt-3">
           <label className="form-label">Description:</label>
           <textarea name="description" value={formData.description} onChange={handleChange} className="form-control" rows="3"></textarea>
@@ -163,6 +189,12 @@ const PaymentSlipForm = () => {
         <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
           {loading ? 'Submitting...' : 'Submit'}
         </button>
+
+        {/* PDF417 Barcode Display */}
+        <div className="mt-4">
+          <h4>Generated PDF417 Barcode:</h4>
+          <canvas ref={canvasRef} width="600" height="200"></canvas>
+        </div>
       </form>
     </div>
   );

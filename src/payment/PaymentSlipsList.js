@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import './PaymentSlipsList.css';
 
 const PaymentSlipsList = () => {
     const [paymentSlips, setPaymentSlips] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(10);
+    const navigate = useNavigate(); // For navigation after editing or deleting
 
     useEffect(() => {
         fetchPaymentSlips();
@@ -18,13 +22,37 @@ const PaymentSlipsList = () => {
         }
     };
 
+    const handleDelete = async (id) => {
+        const confirm = window.confirm("Are you sure you want to delete this payment slip?");
+        if (confirm) {
+            try {
+                await axios.delete(`http://localhost:8080/deletepaymentslip/${id}`);
+                setPaymentSlips(paymentSlips.filter((paymentSlip) => paymentSlip.id !== id));
+            } catch (error) {
+                console.error("Error deleting payment slip:", error);
+            }
+        }
+    };
+
+    const handleModify = (id) => {
+        navigate(`/editpaymentslip/${id}`);
+    };
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = paymentSlips.slice(indexOfFirstItem, indexOfLastItem);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
-        <div>
-            <h2>Payment Slips</h2>
-            <Link to="/addpaymentslips">
-                <button>Add New Payment Slip</button>
-            </Link>
-            <table>
+        <div className="container">
+            <h2 className="title">Payment Slips</h2>
+            <div className="button-container">
+                <Link to="/addpaymentslips">
+                    <button className="add-button">Add New Payment Slip</button>
+                </Link>
+            </div>
+            <table className="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -41,11 +69,11 @@ const PaymentSlipsList = () => {
                         <th>Call Model Number</th>
                         <th>Purpose Code</th>
                         <th>Description</th>
-                        <th>Details</th> 
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {paymentSlips.map((paymentSlip) => (
+                    {currentItems.map((paymentSlip) => (
                         <tr key={paymentSlip.id}>
                             <td>{paymentSlip.id}</td>
                             <td>{paymentSlip.currencyCode}</td>
@@ -62,16 +90,39 @@ const PaymentSlipsList = () => {
                             <td>{paymentSlip.purposeCode}</td>
                             <td>{paymentSlip.description}</td>
                             <td>
-                                <Link to={`/paymentslips/${paymentSlip.id}`}>View Details</Link>
+                                <button 
+                                    className="modify-button" 
+                                    onClick={() => handleModify(paymentSlip.id)}>
+                                    Modify
+                                </button>
+                                <button 
+                                    className="delete-button" 
+                                    onClick={() => handleDelete(paymentSlip.id)}>
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            
+            <div className="pagination">
+                {Array.from({ length: Math.ceil(paymentSlips.length / itemsPerPage) }, (_, index) => (
+                    <button
+                        key={index + 1}
+                        onClick={() => paginate(index + 1)}
+                        className={currentPage === index + 1 ? 'active-page' : ''}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
 
-            <Link to="/parametrizationoverview">
-                <button>Back To Parametrization</button>
-            </Link>
+            <div className="button-container">
+                <Link to="/parametrizationoverview">
+                    <button className="back-button">Back To Parametrization</button>
+                </Link>
+            </div>
         </div>
     );
 };

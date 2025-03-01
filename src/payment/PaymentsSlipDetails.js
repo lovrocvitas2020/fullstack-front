@@ -95,7 +95,7 @@ const PaymentSlipDetails = () => {
                     <th>Generated QR Code:</th>
                             <td>
                                 {paymentSlip.generatedQRcode ? (
-                                    <QRCodeCanvas value={paymentSlip.generatedQRcode} size={150} />
+                                    <QRCodeCanvas value={paymentSlip.generatedQRcode} size={200} />
                                 ) : (
                                     "No QR Code Available"
                                 )}

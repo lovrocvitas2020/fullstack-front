@@ -220,11 +220,27 @@ function App() {
                 </ProtectedRoute>
               }
             />
-                 <Route
+            <Route
               path="/paymentslips/:id"
               element={
                 <ProtectedRoute>
                   <PaymentSlipDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/deletepaymentslip/:id"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editpaymentslip/:id"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipForm />
                 </ProtectedRoute>
               }
             />
