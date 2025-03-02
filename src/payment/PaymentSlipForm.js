@@ -134,34 +134,40 @@ const PaymentSlipForm = () => {
 
         {/* Payer Information */}
         <div className="row mt-2">
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Payer Name:</label>
             <input type="text" name="payerName" value={formData.payerName} onChange={handleChange} className="form-control" required />
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Payer Address:</label>
             <input type="text" name="payerAddress" value={formData.payerAddress} onChange={handleChange} className="form-control" />
+          </div>
+          <div className="col-md-4">
+            <label className="form-label">Payer City:</label>
+            <input type="text" name="payerCity" value={formData.payerCity} onChange={handleChange} className="form-control" />
           </div>
         </div>
 
         {/* Recipient Information */}
         <div className="row mt-2">
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Recipient Name:</label>
             <input type="text" name="recipientName" value={formData.recipientName} onChange={handleChange} className="form-control" required />
           </div>
-          <div className="col-md-6">
+          <div className="col-md-4">
             <label className="form-label">Recipient Address:</label>
             <input type="text" name="recipientAddress" value={formData.recipientAddress} onChange={handleChange} className="form-control" />
+          </div>
+          <div className="col-md-4">
+            <label className="form-label">Recipient City:</label>
+            <input type="text" name="recipientCity" value={formData.recipientCity} onChange={handleChange} className="form-control" />
           </div>
         </div>
 
         {/* Recipient Account */}
-        <div className="row mt-2">
-          <div className="col-md-12">
-            <label className="form-label">Recipient Account:</label>
-            <input type="text" name="recipientAccount" value={formData.recipientAccount} onChange={handleChange} className="form-control" required />
-          </div>
+        <div className="mt-2">
+          <label className="form-label">Recipient Account:</label>
+          <input type="text" name="recipientAccount" value={formData.recipientAccount} onChange={handleChange} className="form-control" required />
         </div>
 
         {/* Additional Fields */}
@@ -178,12 +184,6 @@ const PaymentSlipForm = () => {
             <label className="form-label">Purpose Code:</label>
             <input type="text" name="purposeCode" value={formData.purposeCode} onChange={handleChange} className="form-control" />
           </div>
-        </div>
-
-        {/* Description */}
-        <div className="mt-3">
-          <label className="form-label">Description:</label>
-          <textarea name="description" value={formData.description} onChange={handleChange} className="form-control" rows="3"></textarea>
         </div>
 
         <button type="submit" className="btn btn-primary mt-3" disabled={loading}>

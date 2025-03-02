@@ -26,6 +26,8 @@ import ViewTasks from './parametrization/ViewTasks';
 import PaymentSlipsList from './payment/PaymentSlipsList';
 import PaymentSlipForm from './payment/PaymentSlipForm';
 import PaymentSlipDetails from './payment/PaymentsSlipDetails';
+import TemplateList from './template/TemplateList';
+import UploadTemplate from './template/UploadTemplate';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -241,6 +243,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PaymentSlipForm />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/viewdocumenttemplates"
+              element={
+                <ProtectedRoute>
+                  <TemplateList />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/deletedocumenttemplate/:id"
+              element={
+                <ProtectedRoute>
+                  <TemplateList />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/documenttemplate/:id"
+              element={
+                <ProtectedRoute>
+                  <TemplateList />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/uploadtemplate"
+              element={
+                <ProtectedRoute>
+                  <UploadTemplate />
                 </ProtectedRoute>
               }
             />

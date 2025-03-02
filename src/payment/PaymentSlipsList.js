@@ -49,7 +49,7 @@ const PaymentSlipsList = () => {
             <h2 className="title">Payment Slips</h2>
             <div className="button-container">
                 <Link to="/addpaymentslips">
-                    <button className="add-button">Add New Payment Slip</button>
+                    <button className="btn btn-primary">Add New Payment Slip</button>
                 </Link>
             </div>
             <table className="table">
@@ -120,7 +120,7 @@ const PaymentSlipsList = () => {
 
             <div className="button-container">
                 <Link to="/parametrizationoverview">
-                    <button className="back-button">Back To Parametrization</button>
+                    <button className="btn btn-primary">Back To Parametrization</button>
                 </Link>
             </div>
         </div>
