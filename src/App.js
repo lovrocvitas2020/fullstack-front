@@ -247,6 +247,14 @@ function App() {
               }
             />
              <Route
+              path="/generatepdf/:id"
+              element={
+                <ProtectedRoute>
+                  <PaymentSlipForm />
+                </ProtectedRoute>
+              }
+            />
+             <Route
               path="/viewdocumenttemplates"
               element={
                 <ProtectedRoute>

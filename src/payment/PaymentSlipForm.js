@@ -110,6 +110,29 @@ const PaymentSlipForm = () => {
     }
   };
 
+  const generatePDF = async () => {
+    if (!id) {
+      setMessage({ type: 'error', text: 'Save the payment slip before generating PDF!' });
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:8080/generatepdf/${id}`, {
+        responseType: 'blob', // Important for handling binary files
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `PaymentSlip_${id}.pdf`;
+      link.click();
+
+      setMessage({ type: 'success', text: 'PDF generated successfully!' });
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Error generating PDF!' });
+    }
+  };
+
   return (
     <div className="container mt-4">
       <Link className="btn btn-primary mb-3" to="/viewpaymentslips">
@@ -186,9 +209,18 @@ const PaymentSlipForm = () => {
           </div>
         </div>
 
+         {/* Payment Description */}
+         <div className="mt-2">
+          <label className="form-label">Payment description:</label>
+          <input type="text" name="description" value={formData.description} onChange={handleChange} className="form-control" required />
+        </div>
+
         <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
           {loading ? 'Submitting...' : 'Submit'}
         </button>
+        <button type="button" className="btn btn-success" onClick={generatePDF}>
+            📄 Generate PDF
+          </button>
 
         {/* PDF417 Barcode Display */}
         <div className="mt-4">

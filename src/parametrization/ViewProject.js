@@ -82,7 +82,7 @@ function ViewProjects() {
     <div className="container mt-5">
       <h2>View Projects</h2>
       <Link className="btn btn-primary mb-3" to="/parametrizationoverview">
-        🏠 Back to Parametrization Overview
+        🏠 Back to Administration Overview
       </Link>
 
       {/* Form for Adding New Project */}

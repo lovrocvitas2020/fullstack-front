@@ -9,6 +9,7 @@
     "bootstrap": "^5.3.3",
     "bwip-js": "^4.5.1",
     "cra-template": "1.2.0",
+    "jspdf": "^3.0.0",
     "pdf417": "^0.1.5",
     "pdf417-generator": "^1.0.5",
     "qrcode.react": "^4.2.0",

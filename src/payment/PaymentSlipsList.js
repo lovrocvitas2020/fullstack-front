@@ -120,7 +120,7 @@ const PaymentSlipsList = () => {
 
             <div className="button-container">
                 <Link to="/parametrizationoverview">
-                    <button className="btn btn-primary">Back To Parametrization</button>
+                    <button className="btn btn-primary">Back To Administration</button>
                 </Link>
             </div>
         </div>

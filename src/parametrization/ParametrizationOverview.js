@@ -7,7 +7,7 @@ function ParametrizationOverview() {
 
   return (
     <div className="container mt-5 text-start">
-      <h1>Parametrization Overview</h1>
+      <h1>Administration Overview</h1>
       <nav>
         <ul className="list-unstyled">
           <li className="mb-2">

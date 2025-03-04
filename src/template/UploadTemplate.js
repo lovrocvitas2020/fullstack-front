@@ -62,13 +62,13 @@ const UploadTemplate = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="file" className="form-label">Choose Template Image (PNG)</label>
+          <label htmlFor="file" className="form-label">Choose Template Image (PDF)</label>
           <input
             type="file"
             id="file"
             name="file"
             className="form-control"
-            accept="image/png"
+            accept="application/pdf"
             onChange={handleFileChange}
             required
           />

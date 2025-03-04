@@ -91,7 +91,7 @@ function ViewTasks() {
     <div className="container mt-5">
       <h1>All Tasks</h1>
       <Link className="btn btn-primary mb-3" to="/parametrizationoverview">
-        🏠 Back to Parametrization Overview
+        🏠 Back to Administration Overview
       </Link>
       <form onSubmit={handleAddTask} className="mb-4">
         <h2>Add New Task</h2>

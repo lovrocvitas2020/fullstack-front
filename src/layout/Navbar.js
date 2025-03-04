@@ -7,7 +7,7 @@ export default function Navbar() {
       <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: "#28a745" }}>
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
-            Full Stack Application
+              CvitasTech 2025 v. Alpha 0.0.1.
           </a>
           <button 
             className="navbar-toggler" 
