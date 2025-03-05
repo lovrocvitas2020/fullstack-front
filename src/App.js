@@ -28,6 +28,7 @@ import PaymentSlipForm from './payment/PaymentSlipForm';
 import PaymentSlipDetails from './payment/PaymentsSlipDetails';
 import TemplateList from './template/TemplateList';
 import UploadTemplate from './template/UploadTemplate';
+import BatchStartScreen from './batch/BatchStartScreen';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -283,6 +284,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <UploadTemplate />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/batch/startbatch1"
+              element={
+                <ProtectedRoute>
+                  <BatchStartScreen />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/batchstartscreen"
+              element={
+                <ProtectedRoute>
+                  <BatchStartScreen />
                 </ProtectedRoute>
               }
             />
