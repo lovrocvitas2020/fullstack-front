@@ -9,7 +9,7 @@ const BatchStartScreen = () => {
     const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
     const startBatch1 = async () => {
-        setMessage("Starting batch...");
+        setMessage("Starting batch for generating worklog...");
         setIsLoading(true);
     
         try {
@@ -52,7 +52,7 @@ const BatchStartScreen = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${API_URL}/startbatch2`, {
+            const response = await fetch(`${API_URL}/batch/startbatch2`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
             });
@@ -89,7 +89,7 @@ const BatchStartScreen = () => {
             </div>
             <br />
             <button style={{ ...styles.button, opacity: isLoading ? 0.6 : 1 }} onClick={startBatch2} disabled={isLoading}>
-                {isLoading ? "Processing..." : "Start Batch - Generate Users List 2"}
+                {isLoading ? "Processing..." : "Start Batch - Generate Payment Slips"}
             </button>
             {message && <p style={styles.message}>{message}</p>}
         </div>

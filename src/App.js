@@ -295,6 +295,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
+               <Route
+              path="/batch/startbatch2"
+              element={
+                <ProtectedRoute>
+                  <BatchStartScreen />
+                </ProtectedRoute>
+              }
+            />
              <Route
               path="/batchstartscreen"
               element={
