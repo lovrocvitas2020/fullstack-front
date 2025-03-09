@@ -25,6 +25,9 @@ function ParametrizationOverview() {
           <li className="mb-2">
             <Link to="/batchstartscreen" className="btn btn-primary mx-2">Batch Jobs</Link>
           </li>
+          <li className="mb-2">
+            <Link to="/viewgeneratedpaymentslips" className="btn btn-primary mx-2">Generated Payment Slips List</Link>
+          </li>
         
            {/*  <li className="mb-2">           <MapComponent /></li>  */}
       

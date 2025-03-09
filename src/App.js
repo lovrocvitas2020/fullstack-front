@@ -29,6 +29,7 @@ import PaymentSlipDetails from './payment/PaymentsSlipDetails';
 import TemplateList from './template/TemplateList';
 import UploadTemplate from './template/UploadTemplate';
 import BatchStartScreen from './batch/BatchStartScreen';
+import GeneratedPaymentSlipsList from './payment/GeneratedPaymentSlipsList';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -308,6 +309,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BatchStartScreen />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/viewgeneratedpaymentslips"
+              element={
+                <ProtectedRoute>
+                  <GeneratedPaymentSlipsList />
+                </ProtectedRoute>
+              }
+            />
+              <Route
+              path="/deletegeneratedpaymentslip/:id"
+              element={
+                <ProtectedRoute>
+                  <GeneratedPaymentSlipsList />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/generatedpaymentslips/pdf/:id"
+              element={
+                <ProtectedRoute>
+                  <GeneratedPaymentSlipsList />
                 </ProtectedRoute>
               }
             />
