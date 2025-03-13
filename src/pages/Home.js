@@ -113,6 +113,24 @@ export default function Home() {
         <div className="row">
           <div className="col-md-3">
             <div className="d-flex flex-column gap-2 mb-3">
+            <Link className="btn custom-btn" to="/membersmanagementoverview">
+                1. Members Management
+              </Link>
+              <Link className="btn custom-btn" to="/boatmanagementoverview">
+                2. Boat and Equipment Management
+              </Link>
+              <Link className="btn custom-btn" to="/adduser">
+                3. Events and Training
+              </Link>
+              <Link className="btn custom-btn" to="/adduser">
+                4. Performance Tracking
+              </Link>
+              <Link className="btn custom-btn" to="/adduser">
+                5. Finance and Payment
+              </Link>
+              <Link className="btn custom-btn" to="/adduser">
+                6. Booking and Scheduling
+              </Link>
               <Link className="btn custom-btn" to="/adduser">
                 Add New User
               </Link>

@@ -10,12 +10,15 @@ export default function AddUser() {
     username: "",
     email: "",
     password: "",
+    role: "ROLE_MEMBER", // Default role
   });
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { name, username, email, password } = user;
+  const { name, username, email, password, role } = user;
+
+  const roles = ["ROLE_ADMIN", "ROLE_MEMBER", "ROLE_COACH", "ROLE_GUEST"];
 
   const onInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -107,6 +110,22 @@ export default function AddUser() {
                 onChange={onInputChange}
                 required
               />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="Role" className="form-label">User Role</label>
+              <select
+                className="form-control"
+                name="role"
+                value={role}
+                onChange={onInputChange}
+                required
+              >
+                {roles.map((roleOption) => (
+                  <option key={roleOption} value={roleOption}>
+                    {roleOption.replace("ROLE_", "")}
+                  </option>
+                ))}
+              </select>
             </div>
             <button type="submit" className="btn btn-outline-primary" disabled={loading}>
               {loading ? "Submitting..." : "Submit"}

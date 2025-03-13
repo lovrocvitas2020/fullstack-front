@@ -3,20 +3,20 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Navbar from './layout/Navbar';
 import Home from './pages/Home';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import AddUser from "./users/AddUser";
-import EditUser from "./users/EditUser";
-import ViewUser from "./users/ViewUser";
-import ViewUserNotes from './users/ViewUserNotes';
-import AddUserNotes from './users/AddUserNotes';
+import AddUser from "./membersmanagement/AddUser";
+import EditUser from "./membersmanagement/EditUser";
+import ViewUser from "./membersmanagement/ViewUser";
+import ViewUserNotes from './membersmanagement/ViewUserNotes';
+import AddUserNotes from './membersmanagement/AddUserNotes';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import EditUserNotes from './users/EditUserNotes';
-import UserList from './users/UserList';
+import EditUserNotes from './membersmanagement/EditUserNotes';
+import UserList from './membersmanagement/UserList';
 import ViewWorklog from './worklog/ViewWorklog';
 import { AuthProvider, useAuth } from './AuthContext'; 
-import ViewUserDetails from './users/ViewUserDetails';
-import AddUserDetails from './users/AddUserDetails';
-import ResetPassword from './users/ResetPassword';
+import ViewUserDetails from './membersmanagement/ViewUserDetails';
+import AddUserDetails from './membersmanagement/AddUserDetails';
+import ResetPassword from './membersmanagement/ResetPassword';
 import ParametrizationOverview from './parametrization/ParametrizationOverview';
 import AddProject from './parametrization/AddProject';
 import ViewProject from './parametrization/ViewProject';
@@ -30,6 +30,10 @@ import TemplateList from './template/TemplateList';
 import UploadTemplate from './template/UploadTemplate';
 import BatchStartScreen from './batch/BatchStartScreen';
 import GeneratedPaymentSlipsList from './payment/GeneratedPaymentSlipsList';
+import MembersManagemenzOverview from './membersmanagement/MembersManagementOverview';
+import BoatManagementOverview from './boatmanagement/BoatManagementOverview';
+import ViewBoats from './boatmanagement/ViewBoats';
+import AddBoat from './boatmanagement/AddBoat'
 
 
 const ProtectedRoute = ({ children }) => {
@@ -333,6 +337,38 @@ function App() {
               element={
                 <ProtectedRoute>
                   <GeneratedPaymentSlipsList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membersmanagementoverview"
+              element={
+                <ProtectedRoute>
+                  <MembersManagemenzOverview />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/boatmanagementoverview"
+              element={
+                <ProtectedRoute>
+                  <BoatManagementOverview />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/viewboats"
+              element={
+                <ProtectedRoute>
+                  <ViewBoats />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/addboat"
+              element={
+                <ProtectedRoute>
+                  <AddBoat />
                 </ProtectedRoute>
               }
             />

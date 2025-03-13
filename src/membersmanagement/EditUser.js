@@ -11,12 +11,14 @@ export default function EditUser() {
     username: "",
     email: "",
     active: false, // Use 'active' instead of 'isActive'
+    role: "ROLE_MEMBER", // Default role
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState(null);
 
-  const { name, username, email, active } = user;
+  const { name, username, email, active, role } = user;
 
   const onInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -47,7 +49,7 @@ export default function EditUser() {
       return;
     }
 
-    if (!name || !username || !email) {
+    if (!name || !username || !email || !role) {
       setValidationError("All fields are required!");
       return;
     }
@@ -73,8 +75,6 @@ export default function EditUser() {
   };
 
   const resetPassword = () => {
-    // Logika za reset lozinke
-    // Na primjer, preusmjeravanje na stranicu za reset lozinke
     navigate(`/send-reset-request/${id}`);
   };
 
@@ -147,6 +147,26 @@ export default function EditUser() {
                   onChange={(e) => onInputChange(e)}
                 />
               </div>
+
+              {/* ✅ User Role Dropdown */}
+              <div className="mb-3">
+                <label htmlFor="role" className="form-label">
+                  User Role
+                </label>
+                <select
+                  className="form-control"
+                  name="role"
+                  value={role}
+                  onChange={(e) => onInputChange(e)}
+                  required
+                >
+                  <option value="ROLE_ADMIN">Admin</option>
+                  <option value="ROLE_MEMBER">Member</option>
+                  <option value="ROLE_COACH">Coach</option>
+                  <option value="ROLE_GUEST">Guest</option>
+                </select>
+              </div>
+
               <button type="submit" className="btn btn-outline-primary">
                 Submit
               </button>

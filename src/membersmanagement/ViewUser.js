@@ -8,7 +8,9 @@ export default function ViewUser() {
     username: "",
     email: "",
     active: false,
+    role: "", // Add role to user state
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -53,7 +55,7 @@ export default function ViewUser() {
           ) : (
             <div className="card">
               <div className="card-header">
-                Details of user id: {user.id}
+                Details of user ID: {user.id}
                 <ul className="list-group list-group-flush">
                   <li className="list-group-item">
                     <b>Name:</b> {user.name}
@@ -65,7 +67,10 @@ export default function ViewUser() {
                     <b>Email:</b> {user.email}
                   </li>
                   <li className="list-group-item">
-                    <b>Active:</b> {user.active ? "Yes" : "No"} {/* Add this line to display isActive */}
+                    <b>Active:</b> {user.active ? "Yes" : "No"}
+                  </li>
+                  <li className="list-group-item">
+                    <b>Role:</b> {user.role} {/* ✅ Display user role */}
                   </li>
                 </ul>
               </div>
@@ -74,11 +79,9 @@ export default function ViewUser() {
           <Link className="btn btn-primary my-2" to="/home">
             Back to Home
           </Link>
-          {/* Add the View User Details button */}
           <Link className="btn btn-secondary my-2" to={`/userdetails/${id}`}>
             View User Details
           </Link>
-          {/* Add the Add User Details button */}
           <Link className="btn btn-success my-2" to={`/adduserdetails/${id}`}>
             Add User Details
           </Link>
