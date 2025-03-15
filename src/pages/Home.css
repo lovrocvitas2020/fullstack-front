@@ -1,5 +1,5 @@
 .custom-btn {
-    background-color: darkgreen !important;
+    background-color: darkblue !important;
     color: white;
     width: 250px; /* Adjust the width as needed */
     text-align: center;
@@ -10,4 +10,14 @@
     margin-left: 20px; /* Adjust as needed */
     font-weight: bold;
     color: #333;
+  }
+
+  .logo-image {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px; /* Add space between logo and text */
+  }
+  .user-info-left {
+    display: flex;
+    align-items: center;
   }

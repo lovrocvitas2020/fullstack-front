@@ -33,7 +33,8 @@ import GeneratedPaymentSlipsList from './payment/GeneratedPaymentSlipsList';
 import MembersManagemenzOverview from './membersmanagement/MembersManagementOverview';
 import BoatManagementOverview from './boatmanagement/BoatManagementOverview';
 import ViewBoats from './boatmanagement/ViewBoats';
-import AddBoat from './boatmanagement/AddBoat'
+import AddBoat from './boatmanagement/AddBoat';
+import EditBoat from './boatmanagement/EditBoat';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -369,6 +370,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AddBoat />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editboat/:id"
+              element={
+                <ProtectedRoute>
+                  <EditBoat />
                 </ProtectedRoute>
               }
             />

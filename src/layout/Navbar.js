@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
   return (
     <div>
-      <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: "#28a745" }}>
+      <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: "#2837a7" }}>
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
               CvitasTech 2025 v. Alpha 0.0.2.

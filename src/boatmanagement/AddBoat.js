@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const AddBoat = () => {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ const AddBoat = () => {
     seats: "",
     material: "",
     year: "",
-    condition: "",
+    conditionOfBoat: "",
     available: false,
   });
 
@@ -34,8 +34,7 @@ const AddBoat = () => {
         throw new Error("Failed to add boat!");
       }
 
-      // Navigate back to ViewBoats after successful submission
-      navigate("/");
+      navigate("/viewboats");
     } catch (error) {
       console.error("Error adding boat:", error);
     }
@@ -92,9 +91,9 @@ const AddBoat = () => {
         />
         <input
           type="text"
-          name="condition"
-          placeholder="Condition"
-          value={formData.condition}
+          name="conditionOfBoat"
+          placeholder="Condition of Boat"
+          value={formData.conditionOfBoat}
           onChange={handleChange}
           required
           style={styles.input}
@@ -112,6 +111,11 @@ const AddBoat = () => {
         <button type="submit" style={styles.submitButton}>
           Submit
         </button>
+
+        {/* Back to Boat Management Button */}
+        <Link className="btn btn-primary my-2" to="/boatmanagementoverview">
+          Back to Boat Management
+        </Link>
       </form>
     </div>
   );
@@ -145,7 +149,7 @@ const styles = {
   },
   submitButton: {
     padding: "10px 20px",
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#00008B",
     color: "white",
     border: "none",
     borderRadius: "5px",

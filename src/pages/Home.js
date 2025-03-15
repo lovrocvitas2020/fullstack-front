@@ -102,6 +102,7 @@ export default function Home() {
   return (
     <div className="container">
       <div className="user-info-left">
+      <img src={require('./logo_vkzagreb.jpg')} alt="Logo" className="logo-image" />
         {user && (
           <div>
             <span>Welcome, {user.username}!</span>
@@ -131,23 +132,14 @@ export default function Home() {
               <Link className="btn custom-btn" to="/adduser">
                 6. Booking and Scheduling
               </Link>
-              <Link className="btn custom-btn" to="/adduser">
-                Add New User
-              </Link>
-              <Link className="btn custom-btn" to="/addusernotes">
-                Add User Notes
-              </Link>
-              <Link className="btn custom-btn" to="/viewusernotes">
-                View User Notes
-              </Link>
               <Link className="btn custom-btn" to="/viewworklog">
-                View Work Log
+                7. Work Log
               </Link>
               <Link className="btn custom-btn" to="/parametrizationoverview">
-                Administration Overview
+                8. Administration Overview
               </Link>
               <button className="btn custom-btn" onClick={generatexls}>
-                Generate Report XLS
+                9. Generate Report XLS
               </button>
               <button className="btn custom-btn" onClick={logOff}>
                 Log Off

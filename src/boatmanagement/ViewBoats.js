@@ -6,16 +6,33 @@ const ViewBoats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate(); // Move this hook to the top level
+  const navigate = useNavigate(); // Add navigate hook
 
   useEffect(() => {
     const fetchBoats = async () => {
       try {
         const response = await fetch("http://localhost:8080/viewboats");
-        if (!response.ok) {
-          throw new Error("Failed to fetch boats!");
-        }
-        const data = await response.json();
+        
+      console.log("Full Response:", response);
+
+      // Clone response before parsing to log raw text
+      const responseClone = response.clone();
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid Content-Type. Expected JSON.");
+      }
+
+      // Read raw response text for debugging
+      const rawText = await responseClone.text();
+      console.log("Raw Response Text:", rawText);
+
+      // Parse JSON response
+      const data = await response.json();
+      console.log("Parsed JSON Response:", data);
+
+
+
         setBoats(data);
       } catch (err) {
         setError(err.message);
@@ -45,13 +62,16 @@ const ViewBoats = () => {
   };
 
   const handleEditBoat = (id) => {
-    navigate(`/editboat/${id}`); // Use navigate here without directly calling useNavigate
+    navigate(`/editboat/${id}`); // Navigate to EditBoat screen
   };
 
   return (
     <div style={styles.container}>
       <h1>View Boats</h1>
       <div style={styles.actions}>
+         <Link className="btn btn-primary my-2" to="/boatmanagementoverview">
+                    Back to Boat Management
+                  </Link>
         <Link to="/addboat" style={styles.addButton}>
           ➕ Add Boat
         </Link>
@@ -82,12 +102,12 @@ const ViewBoats = () => {
                 <td>{boat.seats}</td>
                 <td>{boat.material}</td>
                 <td>{boat.year}</td>
-                <td>{boat.condition}</td>
+                <td>{boat.conditionOfBoat}</td>
                 <td>{boat.available ? "Yes" : "No"}</td>
                 <td>
                   <button
                     style={styles.editButton}
-                    onClick={() => handleEditBoat(boat.id)}
+                    onClick={() => handleEditBoat(boat.id)} // Navigate on click
                   >
                     ✏️ Edit
                   </button>
@@ -147,6 +167,5 @@ const styles = {
     marginTop: "20px",
   },
 };
-
 
 export default ViewBoats;
