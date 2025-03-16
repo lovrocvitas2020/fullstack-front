@@ -35,6 +35,7 @@ import BoatManagementOverview from './boatmanagement/BoatManagementOverview';
 import ViewBoats from './boatmanagement/ViewBoats';
 import AddBoat from './boatmanagement/AddBoat';
 import EditBoat from './boatmanagement/EditBoat';
+import FinanceAndPaymentOverview from './payment/FinanceAndPaymentOverview';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -378,6 +379,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <EditBoat />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/financeandpaymentoverview"
+              element={
+                <ProtectedRoute>
+                  <FinanceAndPaymentOverview />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/generatedpaymentslipslist"
+              element={
+                <ProtectedRoute>
+                  <FinanceAndPaymentOverview />
                 </ProtectedRoute>
               }
             />

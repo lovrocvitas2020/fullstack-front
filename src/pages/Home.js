@@ -126,7 +126,7 @@ export default function Home() {
               <Link className="btn custom-btn" to="/adduser">
                 4. Performance Tracking
               </Link>
-              <Link className="btn custom-btn" to="/adduser">
+              <Link className="btn custom-btn" to="/financeandpaymentoverview">
                 5. Finance and Payment
               </Link>
               <Link className="btn custom-btn" to="/adduser">

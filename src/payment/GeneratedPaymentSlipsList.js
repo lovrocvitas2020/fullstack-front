@@ -165,8 +165,8 @@ const GeneratedPaymentSlipsList = () => {
                     </div>
 
                     <div className="button-container">
-                        <Link to="/parametrizationoverview">
-                            <button className="btn btn-primary">Back To Administration</button>
+                        <Link to="/financeandpaymentoverview">
+                            <button className="btn btn-primary">Back To Finance and Payment</button>
                         </Link>
                     </div>
                 </>
